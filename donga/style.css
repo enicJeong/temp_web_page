@@ -496,82 +496,6 @@
     background: var(--warm-white);
   }
 
-  .stores-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 20px;
-  }
-
-  .store-card {
-    border: 1px solid var(--green-pale);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    transition: box-shadow 0.2s, transform 0.2s;
-  }
-
-  .store-card:hover {
-    box-shadow: 0 12px 40px rgba(46,107,71,0.1);
-    transform: translateY(-2px);
-  }
-
-  .store-img {
-    background: var(--green-pale);
-    height: 140px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 36px;
-    color: var(--green-mid);
-    position: relative;
-  }
-
-  .store-badge {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: var(--green-mid);
-    color: white;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 3px 10px;
-    border-radius: 100px;
-    letter-spacing: 0.3px;
-  }
-
-  .store-body {
-    padding: 20px;
-    background: var(--warm-white);
-  }
-
-  .store-name {
-    font-weight: 700;
-    font-size: 16px;
-    color: var(--green-dark);
-    margin-bottom: 4px;
-  }
-
-  .store-location {
-    font-size: 12.5px;
-    color: var(--text-light);
-    margin-bottom: 12px;
-  }
-
-  .store-hours {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--text-mid);
-    padding: 8px 12px;
-    background: var(--cream);
-    border-radius: 6px;
-  }
-
-  .store-hours::before {
-    content: '⏰';
-    font-size: 13px;
-  }
-
   /* MENU SECTION */
   #menu {
     background: var(--cream);
@@ -621,66 +545,6 @@
     align-items: start;
   }
 
-  .contact-info-block {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    margin-top: 8px;
-  }
-
-  .contact-item {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-  }
-
-  .contact-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    background: var(--green-pale);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-  }
-
-  .contact-detail-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--text-light);
-    margin-bottom: 4px;
-  }
-
-  .contact-detail-value {
-    font-size: 15px;
-    color: var(--text-dark);
-    font-weight: 400;
-    line-height: 1.5;
-  }
-
-  .contact-map {
-    background: var(--green-pale);
-    border-radius: var(--radius-lg);
-    height: 360px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    color: var(--green-mid);
-    border: 1px solid rgba(74,156,106,0.2);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .map-pin { font-size: 40px; }
-  .map-label { font-size: 13px; font-weight: 500; letter-spacing: 0.5px; }
-  .map-sub { font-size: 12px; color: var(--text-light); }
-
   /* FOOTER */
   footer {
     background: var(--green-dark);
@@ -720,15 +584,6 @@
 
   .footer-links a:hover { color: rgba(255,255,255,0.7); }
 
-  .store-row {
-    font-size: 13px;
-    color: var(--text-mid);
-    padding: 7px 10px;
-    border-radius: 6px;
-    background: var(--cream);
-    font-weight: 300;
-  }
-
   @media (max-width: 900px) {
     .hero { grid-template-columns: 1fr; }
     .hero-right { display: none; }
@@ -738,7 +593,6 @@
     .nav-links { gap: 16px; }
     .nav-links li:nth-child(n+4) { display: none; }
     footer { flex-direction: column; gap: 24px; text-align: center; }
-    .stores-campus-grid { grid-template-columns: 1fr !important; }
   }
 
 /* Extracted inline styles */
@@ -781,11 +635,25 @@
 
 .u-style-019 { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 4px; letter-spacing: 0.5px; }
 
-.u-style-020 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.u-style-020 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; align-items: start; }
+
+/* 매장현황 캠퍼스 배치 - 패드: 2열 */
+@media (max-width: 900px) and (min-width: 601px) {
+  .stores-campus-grid.u-style-020 { grid-template-columns: 1fr 1fr; }
+}
+
+/* 매장현황 캠퍼스 배치 - 모바일: 1열 */
+@media (max-width: 600px) {
+  .stores-campus-grid.u-style-020 { grid-template-columns: 1fr; }
+}
 
 .u-style-021 { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
 
-.u-style-022 { width: 8px; height: 8px; border-radius: 50%; background: var(--green-mid); flex-shrink: 0; }
+/* 캠퍼스 마커 (공통 + 색상) */
+.campus-marker { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.marker-green { background: var(--green-mid); }
+.marker-gold  { background: var(--gold); }
+.marker-brown { background: #8b7355; }
 
 .u-style-023 { font-family: 'Noto Sans KR', sans-serif; font-size: 20px; font-weight: 700; color: var(--green-dark); }
 
@@ -793,7 +661,16 @@
 
 .u-style-025 { border: 1px solid var(--green-pale); border-radius: var(--radius-lg); overflow: hidden; }
 
-.u-style-026 { background: var(--green-pale); padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
+.u-style-026 { padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
+
+/* 매장 종류별 헤더 색상 (녹색 계열) */
+.store-header-cvs  { background: var(--green-mid); }    /* 편의점 - 진하게 */
+.store-header-cafe { background: var(--green-light); }  /* 카페 - 보통 */
+.store-header-rest { background: var(--green-pale); }   /* 식당 - 덜 진하게 */
+
+.store-header-cvs  .u-style-028,
+.store-header-cafe .u-style-028 { color: #fff; }
+.store-header-rest .u-style-028 { color: var(--green-dark); }
 
 .u-style-027 { font-size: 15px; }
 
@@ -807,15 +684,13 @@
 
 .u-style-032 { padding: 0 8px 12px; display: flex; flex-direction: column; gap: 2px; }
 
-.u-style-033 { display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 8px; border-radius: 6px; background: var(--cream); gap: 4px; }
+/* 매장 테이블 행 (공통 + 음영 변형) */
+.store-row { display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 8px; border-radius: 6px; gap: 4px; }
+.store-row-shaded { background: var(--cream); }
 
 .u-style-034 { font-size: 12.5px; color: var(--text-dark); font-weight: 500; }
 
 .u-style-035 { font-size: 12px; color: var(--text-mid); }
-
-.u-style-036 { display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 8px; border-radius: 6px; gap: 4px; }
-
-.u-style-037 { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
 
 .u-style-038 { text-align: center; background: var(--cream); }
 
@@ -831,18 +706,17 @@
 
 .u-style-044 { max-width: 480px; display: flex; flex-direction: column; gap: 0; }
 
-.u-style-045 { display: flex; align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--green-pale); }
+/* 연락처 행 (공통 + 변형) */
+.contact-row { display: flex; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--green-pale); }
+.contact-row-baseline { align-items: baseline; }
+.contact-row-last { border-bottom: none; }
 
 .u-style-046 { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--text-light); min-width: 90px; text-transform: uppercase; }
 
 .u-style-047 { font-size: 14.5px; color: var(--text-dark); line-height: 1.7; }
 
-.u-style-048 { display: flex; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--green-pale); }
-
 .u-style-049 { font-size: 14.5px; color: var(--green-mid); text-decoration: none; font-weight: 500; }
 
 .u-style-050 { font-size: 14.5px; color: var(--text-dark); }
-
-.u-style-051 { display: flex; align-items: center; padding: 18px 0; }
 
 .u-style-052 { font-size: 13px; color: var(--text-light); margin-left: 10px; }
