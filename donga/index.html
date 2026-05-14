@@ -16,6 +16,9 @@
         동아대학교생활협동조합
         <span>Dong-A University Co-op</span>
   </div>
+  <button class="nav-toggle" aria-label="메뉴 열기" aria-expanded="false">
+        <span></span><span></span><span></span>
+  </button>
   <ul class="nav-links">
       <li><a href="#intro">생협 소개</a></li>
       <li><a href="#membership">조합원 안내</a></li>
@@ -91,10 +94,7 @@
             </div>
       </div>
       <div class="intro-image-block">
-            <div class="intro-img-placeholder">
-                  <div class="img-icon">🏛️</div>
-                  <span>캠퍼스 생협 이미지</span>
-            </div>
+            <img class="intro-img" src="bg_01.png" alt="동아대학교 생활협동조합 캠퍼스" />
             <div class="intro-stat-pill">
                   <span class="stat-num">30+</span>
                   <span class="stat-label">년의 신뢰</span>
@@ -156,8 +156,6 @@
             <div class="mem-desc">가입 즉시 다양한 조합원 전용 혜택을 이용하실 수 있습니다.</div>
             <ul class="mem-list">
                   <li>매장 이용 할인 혜택</li>
-                  <li>출자금 이자 배당</li>
-                  <li>잉여금 이용고배당</li>
                   <li>조합원 전용 이벤트</li>
             </ul>
       </div>
@@ -504,5 +502,28 @@
             <a href="#contact">고객센터</a>
       </div>
 </footer>
+<script>
+  (function () {
+    var toggle = document.querySelector('.nav-toggle');
+    var links = document.querySelector('.nav-links');
+    if (!toggle || !links) return;
+    function closeMenu() {
+      links.classList.remove('open');
+      toggle.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', '메뉴 열기');
+    }
+    toggle.addEventListener('click', function () {
+      var isOpen = links.classList.toggle('open');
+      toggle.classList.toggle('open', isOpen);
+      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      toggle.setAttribute('aria-label', isOpen ? '메뉴 닫기' : '메뉴 열기');
+    });
+    // 메뉴 항목 클릭 시 자동으로 닫기
+    links.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', closeMenu);
+    });
+  })();
+</script>
 </body>
 </html>
