@@ -1,535 +1,442 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
-      <meta charset="utf-8"/>
-      <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-      <title>동아대학교생활협동조합</title>
-      <link href="https://fonts.googleapis.com" rel="preconnect"/>
-      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/><link href="style.css" rel="stylesheet"/>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>동아대학교생활협동조합</title>
+  <meta name="description" content="동아대학교생활협동조합 안내용 임시 홈페이지입니다." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<!-- NAV -->
-<nav>
-      <div class="nav-logo">
-        동아대학교생활협동조합
-        <span>Dong-A University Co-op</span>
-  </div>
-  <button class="nav-toggle" aria-label="메뉴 열기" aria-expanded="false">
-        <span></span><span></span><span></span>
-  </button>
-  <ul class="nav-links">
-      <li><a href="#intro">생협 소개</a></li>
-      <li><a href="#membership">조합원 안내</a></li>
-      <li><a href="#stores">매장현황</a></li>
-      <li><a href="#menu">주간메뉴</a></li>
-      <li><a href="#contact">고객센터</a></li>
-</ul>
-</nav>
-<!-- HERO -->
-<section class="hero">
-      <div class="hero-bg-pattern"></div>
-      <div class="hero-left">
-            <div class="hero-badge">동아대학교생활협동조합 임시페이지</div>
-            <h1 class="hero-title">함께 만드는<br/><em>더 나은 캠퍼스</em><br/>생활</h1>
-            <p class="hero-desc">
-                  동아대학교 생활협동조합은 학생, 교직원 등 대학 구성원이 함께 운영하는 비영리 협동조합입니다. 합리적인 가격과 건강한 먹거리로 캠퍼스 생활을 더욱 풍요롭게 만들어갑니다.
-            </p>
-            <div class="hero-cta-group">
-                  <a class="btn-primary" href="#membership">조합원 가입하기</a>
-                  <a class="btn-outline" href="#intro">생협 알아보기</a>
+  <nav class="site-nav" aria-label="주요 메뉴">
+    <div class="nav-inner">
+      <a class="brand" href="#top" aria-label="동아대학교생활협동조합 홈으로 이동">
+        <span class="brand-title">동아대학교생활협동조합</span>
+        <span class="brand-subtitle">Dong-A University Co-op</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="navLinks">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-links" id="navLinks">
+        <a href="#intro">생협 소개</a>
+        <a href="#membership">조합원 안내</a>
+        <a href="#stores">매장현황</a>
+        <a href="#menu">주간메뉴</a>
+        <a href="#contact">고객센터</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="section-container hero-grid">
+        <div class="hero-copy">
+          <p class="hero-badge">동아대학교생활협동조합 임시페이지</p>
+          <h1 id="hero-title">함께 만드는<br /><span>더 나은 캠퍼스</span><br />생활</h1>
+          <p class="hero-description">
+            동아대학교생활협동조합은 대학 구성원이 함께 출자하고 이용하며,<br>캠퍼스 안의 더 건강하고 편리한 생활문화를 만들어가는 비영리 협동조합입니다.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#membership">조합원 가입하기</a>
+            <a class="button button-outline" href="#intro">생협 알아보기</a>
+          </div>
+        </div>
+
+        <div class="hero-card-stack" aria-label="생협 주요 정보">
+          <article class="hero-card hero-card-one">
+            <span class="hero-card-label">설립연도</span>
+            <strong>1995년</strong>
+            <p>30년의 역사</p>
+          </article>
+          <article class="hero-card hero-card-two">
+            <span class="hero-card-label">운영 매장</span>
+            <strong>학생식당 · 카페 · 편의점</strong>
+            <p>캠퍼스 생활 기반 서비스</p>
+          </article>
+          <article class="hero-card hero-card-three">
+            <span class="hero-card-label">조합원 혜택</span>
+            <strong>할인 · 적립</strong>
+            <p>이용할수록 커지는 환원</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-intro" id="intro" aria-labelledby="intro-title">
+      <div class="section-container">
+        <div class="section-header section-header-wide section-header-stacked">
+          <p class="section-label">About</p>
+          <h2 id="intro-title" class="section-title">생협 소개</h2>
+          <div class="section-divider" aria-hidden="true"></div>
+          <p class="section-lead">
+            동아대학교생활협동조합은 학생, 교원, 직원 등 대학 구성원이 주체가 되어<br>캠퍼스 복지와 생활서비스를 함께 운영하는 협동조합입니다.<br>조합원의 참여를 바탕으로<br>안정적인 먹거리, 편리한 매장, 투명한 운영을 지향합니다.
+          </p>
+        </div>
+
+        <div class="intro-content-grid">
+          <div class="value-grid">
+            <article class="value-card">
+              <span class="value-icon">🤝</span>
+              <h3>협동의 가치</h3>
+              <p>구성원이 함께 만들고 함께 이용하는 캠퍼스 공동체를 지향합니다.</p>
+            </article>
+            <article class="value-card">
+              <span class="value-icon">🍚</span>
+              <h3>합리적 복지서비스</h3>
+              <p>건강한 먹거리와 합리적 가격으로 캠퍼스 생활을 지원합니다.</p>
+            </article>
+            <article class="value-card">
+              <span class="value-icon">🌱</span>
+              <h3>이익의 환원</h3>
+              <p>운영 성과를 조합원과 대학 구성원을 위한 혜택으로 돌려드립니다.</p>
+            </article>
+            <article class="value-card">
+              <span class="value-icon">🏫</span>
+              <h3>지역사회 기여</h3>
+              <p>대학과 지역이 함께 성장하는 공익적 활동을 확대합니다.</p>
+            </article>
+          </div>
+
+          <div class="intro-image-block">
+            <img class="intro-img" src="bg_01.png" alt="bg이미지" />
+            <div class="trust-badge">
+              <strong>협동과<br>복지</strong>
             </div>
+          </div>
+        </div>
       </div>
-      <div class="hero-right">
-            <div class="hero-card-stack">
-                  <div class="hero-card">
-                        <div class="hero-card-label">설립연도</div>
-                        <div class="hero-card-value">1995년</div>
-                        <div class="hero-card-sub">30년의 역사</div>
-                  </div>
-                  <div class="hero-card">
-                        <div class="hero-card-label">운영 매장</div>
-                        <div class="hero-card-value">학생식당 · 카페 · 편의점</div>
-                        <div class="hero-card-sub">캠퍼스 전역 서비스</div>
-                  </div>
-                  <div class="hero-card">
-                        <div class="hero-card-label">조합원 혜택</div>
-                        <div class="hero-card-value">할인 · 적립</div>
-                        <div class="hero-card-sub">조합원 전용 혜택</div>
-                  </div>
-            </div>
-      </div>
-</section>
-<!-- INTRO -->
-<section id="intro">
-      <div class="intro-header">
-            <p class="section-label">About</p>
-            <h2 class="section-title">생협 소개</h2>
-            <div class="divider"></div>
-            <p class="section-desc">
-                  동아대학교 생활협동조합은 구성원이 주인이 되어 함께 운영하는 협동조합입니다.<br>
-                  이익을 조합원에게 환원하고, 지속 가능한 캠퍼스 생활 문화를 만들어갑니다.
-            </p>
-      </div>
-      <div class="intro-body">
-            <div class="intro-values">
-                  <div class="value-card">
-                        <div class="value-icon">🤝</div>
-                        <div class="value-title">협동의 가치</div>
-                        <div class="value-desc">구성원이 함께 운영하고 결정하며 민주적인 공동체를 만듭니다</div>
-                  </div>
-                  <div class="value-card">
-                        <div class="value-icon">🌿</div>
-                        <div class="value-title">합리적 복지서비스</div>
-                        <div class="value-desc">건강한 먹거리와 합리적 가격으로 캠퍼스 생활을 지원합니다</div>
-                  </div>
-                  <div class="value-card">
-                        <div class="value-icon">💚</div>
-                        <div class="value-title">이익의 환원</div>
-                        <div class="value-desc">운영 수익을 배당과 서비스 개선을 통해 조합원에게 환원합니다</div>
-                  </div>
-                  <div class="value-card">
-                        <div class="value-icon">🏫</div>
-                        <div class="value-title">지역사회 기여</div>
-                        <div class="value-desc">대학과 지역 사회를 연결하여 지속가능한 상생을 실천합니다</div>
-                  </div>
-            </div>
-            <div class="intro-image-block">
-                  <img class="intro-img" src="bg_01.png" alt="동아대학교 생활협동조합 캠퍼스" />
-                  <div class="intro-stat-pill">
-                        <span class="stat-num">상생의</span>
-                        <span class="stat-num">캠퍼스</span>
-                  </div>
-            </div>
-      </div>
-</section>
-<!-- MEMBERSHIP -->
-<section id="membership">
-      <p class="section-label">Membership</p>
-      <h2 class="section-title">조합원 가입 · 탈퇴 안내</h2>
-      <div class="divider u-style-001"></div>
-      <p class="section-desc u-style-002">
-        대학 구성원(학생, 교수, 직원)이라면 누구나 출자금으로 조합원이 될 수 있습니다.<br>
-        출자금은 생협 운영의 소중한 밑거름이 되며,<br>
-        매장 이용 혜택과 함께 운영에 참여할 권리를 가집니다.
-  </p>
-<!-- 조합원 현황 통계 -->
-<div class="u-style-003">
-      <div class="u-style-004">
-            <div class="u-style-005">교원</div>
-            <div class="u-style-006">128<span class="u-style-007">명</span></div>
-      </div>
-      <div class="u-style-004">
-            <div class="u-style-005">직원</div>
-            <div class="u-style-006">214<span class="u-style-007">명</span></div>
-      </div>
-      <div class="u-style-004">
-            <div class="u-style-005">학생</div>
-            <div class="u-style-006">3,842<span class="u-style-007">명</span></div>
-      </div>
-      <div class="u-style-008">
-            <div class="u-style-009">총 조합원</div>
-            <div class="u-style-010">4,184<span class="u-style-007">명</span></div>
-      </div>
-</div>
-<p class="u-style-011">※2023.12.31. 기준</p>
-<div class="membership-grid">
-      <div class="mem-card">
-            <div class="mem-step">STEP 01</div>
-            <div class="mem-title">가입 자격</div>
-            <div class="mem-desc">동아대학교 학생, 교수, 직원 누구나 가입 가능합니다.</div>
-            <ul class="mem-list">
-                  <li>재학생 및 대학원생</li>
-                  <li>교원 및 직원</li>
-                  <li>기타 학내 구성원</li>
+    </section>
+
+    <section class="section section-membership" id="membership" aria-labelledby="membership-title">
+      <div class="section-container">
+        <div class="section-header section-header-wide">
+          <p class="section-label label-gold">Membership</p>
+          <h2 id="membership-title" class="section-title title-white">조합원 가입 · 탈퇴 안내</h2>
+          <div class="section-divider divider-gold" aria-hidden="true"></div>
+          <p class="section-lead lead-white">
+            대학 구성원(학생, 교수, 직원)이라면 누구나 출자금으로 조합원이 될 수 있습니다.<br />
+            출자금은 생협 운영의 소중한 밑거름이 되며,<br />
+            매장 이용 혜택과 함께 운영에 참여할 권리를 가집니다.
+          </p>
+        </div>
+
+        <div class="member-stats" aria-label="조합원 현황 통계">
+          <article class="member-stat-card">
+            <span>교원</span>
+            <strong>128<small>명</small></strong>
+          </article>
+          <article class="member-stat-card">
+            <span>직원</span>
+            <strong>214<small>명</small></strong>
+          </article>
+          <article class="member-stat-card">
+            <span>학생</span>
+            <strong>3,842<small>명</small></strong>
+          </article>
+          <article class="member-stat-card member-stat-total">
+            <span>총 조합원</span>
+            <strong>4,184<small>명</small></strong>
+          </article>
+        </div>
+        <p class="stats-note">※ 2023.12.31. 기준</p>
+
+        <div class="membership-grid membership-grid-steps">
+          <article class="membership-card">
+            <span class="membership-step">STEP 01</span>
+            <h3>가입 자격</h3>
+            <p>동아대학교 학생, 교수, 직원 누구나 가입 가능합니다.</p>
+            <ul class="membership-list">
+              <li>재학생 및 대학원생</li>
+              <li>교원 및 직원</li>
+              <li>기타 학내 구성원</li>
             </ul>
-      </div>
-      <div class="mem-card">
-            <div class="mem-step">STEP 02</div>
-            <div class="mem-title">가입 방법</div>
-            <div class="mem-desc">생협 사무실 방문하시어 가입서류를 작성하고 출자금을 납부합니다.</div>
-            <ul class="mem-list">
-                  <li>출자금 납부 (1좌 1만원)</li>
-                  <li>가입신청서 작성 및 제출</li>
-                  <li>조합원증 수령</li>
+          </article>
+          <article class="membership-card">
+            <span class="membership-step">STEP 02</span>
+            <h3>가입 방법</h3>
+            <p>생협 사무실을 방문해 가입서류를 작성하고 출자금을 납부합니다.</p>
+            <ul class="membership-list">
+              <li>출자금 납부</li>
+              <li>가입신청서 작성 및 제출</li>
+              <li>조합원 등록</li>
             </ul>
-      </div>
-      <div class="mem-card">
-            <div class="mem-step">STEP 03</div>
-            <div class="mem-title">조합원 혜택</div>
-            <div class="mem-desc">가입 즉시 다양한 조합원 전용 혜택을 이용하실 수 있습니다.</div>
-            <ul class="mem-list">
-                  <li>매장 이용 할인 혜택</li>
-                  <li>조합원 전용 이벤트</li>
+          </article>
+          <article class="membership-card">
+            <span class="membership-step">STEP 03</span>
+            <h3>조합원 혜택</h3>
+            <p>가입 즉시 다양한 조합원 전용 혜택과 환원 사업에 참여할 수 있습니다.</p>
+            <ul class="membership-list">
+              <li>매장 이용 할인 혜택</li>
+              <li>조합원 전용 이벤트</li>
+              <li>생협 운영 참여</li>
             </ul>
+          </article>
+        </div>
+
+        <div class="membership-notice">
+          <strong>탈퇴 안내</strong>
+          <p>탈퇴를 원하시는 경우 학생회관 106호 생협 사무실을 방문하시거나 고객센터로 문의해 주세요. 납입 출자금은 규정에 따라 반환됩니다.</p>
+        </div>
       </div>
-</div>
-<div class="u-style-012">
-      <p class="u-style-013">
-            <strong class="u-style-014">탈퇴 안내</strong>  
-            탈퇴를 원하시는 경우 학생회관 106호 생협 사무실을 방문하시거나 고객센터로 문의해 주세요. 납입 출자금은 규정에 따라 반환됩니다.
-      </p>
-</div>
-</section>
-<!-- STORES -->
-<section id="stores">
-      <p class="section-label">Stores</p>
-      <h2 class="section-title">매장 현황</h2>
-      <div class="divider"></div>
-      <p class="section-desc">협동의 가치는 매장에서 완성됩니다.<br>구성원이 참여해 함께 만드는 쿱스켓 편의점,<br>고품질 메뉴를 합리적인 가격에 제공하는 쿱카페,<br>믿을 수 있는 식자재로 정성껏 차리는 생협 식당이<br>캠퍼스 곳곳에서 여러분을 맞이합니다.
-</p>
-<!-- 요약 통계 -->
-<div class="u-style-015">
-      <div class="u-style-016">
-            <div class="u-style-017">7</div>
-            <div class="u-style-018">편의점 (쿱스켓)</div>
-            <div class="u-style-019">승학 4 · 부민 2 · 구덕 1</div>
-      </div>
-      <div class="u-style-016">
-            <div class="u-style-017">7</div>
-            <div class="u-style-018">카페 (쿱카페)</div>
-            <div class="u-style-019">승학 6 · 부민 1</div>
-      </div>
-      <div class="u-style-016">
-            <div class="u-style-017">6</div>
-            <div class="u-style-018">식당</div>
-            <div class="u-style-019">승학 4 · 부민 1 · 구덕 1</div>
-      </div>
-</div>
-<!-- 캠퍼스별 레이아웃 -->
-<div class="stores-campus-grid u-style-020">
-<!-- 승학캠퍼스 -->
-<div>
-      <div class="u-style-021">
-            <div class="campus-marker marker-green"></div>
-            <h3 class="u-style-023">승학캠퍼스</h3>
-      </div>
-      <div class="u-style-024">
-<!-- 편의점 -->
-<div class="u-style-025">
-      <div class="u-style-026 store-header-cvs">
-            <span class="u-style-027">🛒</span>
-            <span class="u-style-028">편의점 (쿱스켓)</span>
-      </div>
-      <div class="u-style-029">
-            <div class="u-style-030">
-                  <span class="u-style-031">매장명</span>
-                  <span class="u-style-031">장소</span>
-                  <span class="u-style-031">운영시간</span>
+    </section>
+
+    <section class="section section-stores" id="stores" aria-labelledby="stores-title">
+      <div class="section-container">
+        <div class="section-header section-header-wide section-header-stacked stores-header">
+          <p class="section-label">Stores</p>
+          <h2 id="stores-title" class="section-title">매장현황</h2>
+          <div class="section-divider" aria-hidden="true"></div>
+          <p class="section-lead">
+            협동의 가치는 매장에서 완성됩니다.<br>구성원이 참여해 함께 만드는 쿱스켓 편의점,<br>고품질 메뉴를 합리적인 가격에 제공하는 쿱카페,<br>믿을 수 있는 식자재로 정성껏 차리는 생협 식당이<br>캠퍼스 곳곳에서 여러분을 맞이합니다.
+          </p>
+        </div>
+
+        <div class="store-summary-grid">
+          <article class="store-summary-card">
+            <strong>7</strong>
+            <span>편의점</span>
+            <p>승학 4 · 부민 2 · 구덕 1</p>
+          </article>
+          <article class="store-summary-card">
+            <strong>7</strong>
+            <span>카페</span>
+            <p>승학 6 · 부민 1</p>
+          </article>
+          <article class="store-summary-card">
+            <strong>6</strong>
+            <span>식당</span>
+            <p>승학 4 · 부민 1 · 구덕 1</p>
+          </article>
+        </div>
+
+        <div class="campus-grid">
+          <article class="campus-block">
+            <h3><span class="campus-marker marker-green"></span>승학캠퍼스</h3>
+            <div class="store-card">
+              <div class="store-header store-header-cvs">편의점</div>
+              <table>
+                <thead>
+                  <tr><th>매장명</th><th>장소</th><th>운영시간</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="store-row"><td>학생회관점</td><td>학생회관 1층</td><td>08:30–20:00</td></tr>
+                  <tr class="store-row store-row-shaded"><td>공대점</td><td>공과대학</td><td>09:00–18:00</td></tr>
+                  <tr class="store-row"><td>도서관점</td><td>한림도서관</td><td>09:00–19:00</td></tr>
+                  <tr class="store-row store-row-shaded"><td>기숙사점</td><td>생활관</td><td>08:00–22:00</td></tr>
+                </tbody>
+              </table>
             </div>
-            <div class="u-style-032">
-                  <div class="store-row store-row-shaded">
-                        <span class="u-style-034">학생회관 매점</span>
-                        <span class="u-style-035">학생회관</span>
-                        <span class="u-style-035">24시간</span>
-                  </div>
-                  <div class="store-row">
-                        <span class="u-style-034">도서관 매점</span>
-                        <span class="u-style-035">도서관</span>
-                        <span class="u-style-035">24시간</span>
-                  </div>
-                  <div class="store-row store-row-shaded">
-                        <span class="u-style-034">공대2호관 매점</span>
-                        <span class="u-style-035">공대2호관</span>
-                        <span class="u-style-035">24시간</span>
-                  </div>
-                  <div class="store-row">
-                        <span class="u-style-034">공대5호관 매점</span>
-                        <span class="u-style-035">공대5호관</span>
-                        <span class="u-style-035">24시간</span>
-                  </div>
+            <div class="store-card">
+              <div class="store-header store-header-cafe">카페</div>
+              <table>
+                <thead>
+                  <tr><th>매장명</th><th>장소</th><th>운영시간</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="store-row"><td>카페 온</td><td>학생회관</td><td>08:30–18:30</td></tr>
+                  <tr class="store-row store-row-shaded"><td>북카페</td><td>도서관</td><td>09:00–18:00</td></tr>
+                  <tr class="store-row"><td>그린라운지</td><td>인문대</td><td>09:00–17:30</td></tr>
+                  <tr class="store-row store-row-shaded"><td>공대카페</td><td>공과대학</td><td>09:00–18:00</td></tr>
+                </tbody>
+              </table>
             </div>
+            <div class="store-card">
+              <div class="store-header store-header-dining">식당</div>
+              <table>
+                <thead>
+                  <tr><th>매장명</th><th>장소</th><th>운영시간</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="store-row"><td>학생식당</td><td>학생회관</td><td>11:00–14:00</td></tr>
+                  <tr class="store-row store-row-shaded"><td>교직원식당</td><td>교직원회관</td><td>11:30–13:30</td></tr>
+                  <tr class="store-row"><td>분식당</td><td>학생회관</td><td>10:30–18:30</td></tr>
+                  <tr class="store-row store-row-shaded"><td>스낵코너</td><td>생활관</td><td>17:00–20:00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="campus-block">
+            <h3><span class="campus-marker marker-gold"></span>부민캠퍼스</h3>
+            <div class="store-card">
+              <div class="store-header store-header-cvs">편의점</div>
+              <table>
+                <thead>
+                  <tr><th>매장명</th><th>장소</th><th>운영시간</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="store-row"><td>법대점</td><td>법학전문대학원</td><td>09:00–18:00</td></tr>
+                  <tr class="store-row store-row-shaded"><td>국제관점</td><td>국제관</td><td>08:30–19:00</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="store-card">
+              <div class="store-header store-header-cafe">카페</div>
+              <table>
+                <thead>
+                  <tr><th>매장명</th><th>장소</th><th>운영시간</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="store-row"><td>부민카페</td><td>종합강의동</td><td>08:30–18:00</td></tr>
+                  <tr class="store-row store-row-shaded"><td>로스쿨카페</td><td>법전원</td><td>09:00–17:30</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="store-card">
+              <div class="store-header store-header-dining">식당</div>
+              <table>
+                <thead>
+                  <tr><th>매장명</th><th>장소</th><th>운영시간</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="store-row"><td>부민식당</td><td>종합강의동</td><td>11:00–14:00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="campus-block">
+            <h3><span class="campus-marker marker-brown"></span>구덕캠퍼스</h3>
+            <div class="store-card">
+              <div class="store-header store-header-cvs">편의점</div>
+              <table>
+                <thead>
+                  <tr><th>매장명</th><th>장소</th><th>운영시간</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="store-row"><td>의대점</td><td>의과대학</td><td>09:00–18:00</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="store-card">
+              <div class="store-header store-header-cafe">카페</div>
+              <table>
+                <thead>
+                  <tr><th>매장명</th><th>장소</th><th>운영시간</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="store-row"><td>구덕카페</td><td>강의동 1층</td><td>09:00–17:30</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="store-card">
+              <div class="store-header store-header-dining">식당</div>
+              <table>
+                <thead>
+                  <tr><th>매장명</th><th>장소</th><th>운영시간</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="store-row"><td>구덕식당</td><td>복지관</td><td>11:00–14:00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </div>
       </div>
-</div>
-<!-- 카페 -->
-<div class="u-style-025">
-      <div class="u-style-026 store-header-cafe">
-            <span class="u-style-027">☕</span>
-            <span class="u-style-028">카페 (쿱카페)</span>
+    </section>
+
+    <section class="section section-menu" id="menu" aria-labelledby="menu-title">
+      <div class="section-container menu-simple">
+        <p class="section-label">Weekly Menu</p>
+        <h2 id="menu-title" class="section-title">이번 주 메뉴</h2>
+        <div class="section-divider divider-centered" aria-hidden="true"></div>
+        <p class="section-lead menu-lead">매주 업데이트되는 학생식당 주간 메뉴를 확인하세요.</p>
+        <a class="button button-green" href="https://www.donga.ac.kr/kor/CMS/DietMenuMgr/list.do?mCode=MN199" target="_blank" rel="noopener">
+          주간메뉴 바로보기 <span aria-hidden="true">↗</span>
+        </a>
       </div>
-      <div class="u-style-029">
-            <div class="u-style-030">
-                  <span class="u-style-031">매장명</span>
-                  <span class="u-style-031">장소</span>
-                  <span class="u-style-031">운영시간</span>
-            </div>
-            <div class="u-style-032">
-                  <div class="store-row store-row-shaded">
-                        <span class="u-style-034">학생회관 카페</span>
-                        <span class="u-style-035">학생회관</span>
-                        <span class="u-style-035">08:30~17:30</span>
-                  </div>
-                  <div class="store-row">
-                        <span class="u-style-034">학생회관 다방</span>
-                        <span class="u-style-035">학생회관</span>
-                        <span class="u-style-035">08:30~17:30</span>
-                  </div>
-                  <div class="store-row store-row-shaded">
-                        <span class="u-style-034">도서관 카페</span>
-                        <span class="u-style-035">도서관</span>
-                        <span class="u-style-035">08:30~17:30</span>
-                  </div>
-                  <div class="store-row">
-                        <span class="u-style-034">인문대 카페</span>
-                        <span class="u-style-035">인문대학</span>
-                        <span class="u-style-035">08:30~17:30</span>
-                  </div>
-                  <div class="store-row store-row-shaded">
-                        <span class="u-style-034">공대2호관 카페</span>
-                        <span class="u-style-035">공대2호관</span>
-                        <span class="u-style-035">08:30~17:30</span>
-                  </div>
-                  <div class="store-row">
-                        <span class="u-style-034">공대5호관 카페</span>
-                        <span class="u-style-035">공대5호관</span>
-                        <span class="u-style-035">08:30~17:30</span>
-                  </div>
-            </div>
+    </section>
+
+    <section class="section section-contact" id="contact" aria-labelledby="contact-title">
+      <div class="section-container contact-grid">
+        <div>
+          <p class="section-label">Contact</p>
+          <h2 id="contact-title" class="section-title">고객센터</h2>
+          <div class="section-divider" aria-hidden="true"></div>
+          <p class="section-lead">
+            생협 이용, 조합원 가입, 매장 운영과 관련한 문의사항은 아래 연락처로 문의해 주세요.
+          </p>
+        </div>
+        <div class="contact-list">
+          <div class="contact-row">
+            <span>Address</span>
+            <p>부산광역시 사하구 낙동대로 550번길 37, 동아대학교 학생회관 106호</p>
+          </div>
+          <div class="contact-row">
+            <span>Tel</span>
+            <p>051-200-6152</p>
+          </div>
+          <div class="contact-row">
+            <span>Fax</span>
+            <p>051-204-3599</p>
+          </div>
+          <div class="contact-row">
+            <span>Hours</span>
+            <p>평일 08:30 – 17:30<br />주말·공휴일 휴무</p>
+          </div>
+        </div>
       </div>
-</div>
-<!-- 식당 -->
-<div class="u-style-025">
-      <div class="u-style-026 store-header-rest">
-            <span class="u-style-027">🍚</span>
-            <span class="u-style-028">식당</span>
-      </div>
-      <div class="u-style-029">
-            <div class="u-style-030">
-                  <span class="u-style-031">매장명</span>
-                  <span class="u-style-031">장소</span>
-                  <span class="u-style-031">운영시간</span>
-            </div>
-            <div class="u-style-032">
-                  <div class="store-row store-row-shaded">
-                        <span class="u-style-034">학생회관 식당</span>
-                        <span class="u-style-035">학생회관</span>
-                        <span class="u-style-035">09:00~16:30</span>
-                  </div>
-                  <div class="store-row">
-                        <span class="u-style-034">도서관 식당</span>
-                        <span class="u-style-035">도서관</span>
-                        <span class="u-style-035">08:30~16:40</span>
-                  </div>
-                  <div class="store-row store-row-shaded">
-                        <span class="u-style-034">교수회관 식당</span>
-                        <span class="u-style-035">교수회관</span>
-                        <span class="u-style-035">11:40~13:30</span>
-                  </div>
-                  <div class="store-row">
-                        <span class="u-style-034">한림생활관 식당</span>
-                        <span class="u-style-035">생활관</span>
-                        <span class="u-style-035">07:30~18:40</span>
-                  </div>
-            </div>
-      </div>
-</div>
-</div>
-</div>
-<!-- 부민캠퍼스 -->
-<div>
-      <div class="u-style-021">
-            <div class="campus-marker marker-gold"></div>
-            <h3 class="u-style-023">부민캠퍼스</h3>
-      </div>
-      <div class="u-style-024">
-<!-- 편의점 -->
-<div class="u-style-025">
-      <div class="u-style-026 store-header-cvs">
-            <span class="u-style-027">🛒</span>
-            <span class="u-style-028">편의점 (쿱스켓)</span>
-      </div>
-      <div class="u-style-029">
-            <div class="u-style-030">
-                  <span class="u-style-031">매장명</span>
-                  <span class="u-style-031">장소</span>
-                  <span class="u-style-031">운영시간</span>
-            </div>
-            <div class="u-style-032">
-                  <div class="store-row store-row-shaded">
-                        <span class="u-style-034">종합강의동 매점</span>
-                        <span class="u-style-035">종합강의동</span>
-                        <span class="u-style-035">24시간</span>
-                  </div>
-                  <div class="store-row">
-                        <span class="u-style-034">국제관 매점</span>
-                        <span class="u-style-035">국제관</span>
-                        <span class="u-style-035">24시간</span>
-                  </div>
-            </div>
-      </div>
-</div>
-<!-- 카페 -->
-<div class="u-style-025">
-      <div class="u-style-026 store-header-cafe">
-            <span class="u-style-027">☕</span>
-            <span class="u-style-028">카페 (쿱카페)</span>
-      </div>
-      <div class="u-style-029">
-            <div class="u-style-030">
-                  <span class="u-style-031">매장명</span>
-                  <span class="u-style-031">장소</span>
-                  <span class="u-style-031">운영시간</span>
-            </div>
-            <div class="u-style-032">
-                  <div class="store-row store-row-shaded">
-                        <span class="u-style-034">종합강의동 카페</span>
-                        <span class="u-style-035">종합강의동</span>
-                        <span class="u-style-035">08:30~17:30</span>
-                  </div>
-            </div>
-      </div>
-</div>
-<!-- 식당 -->
-<div class="u-style-025">
-      <div class="u-style-026 store-header-rest">
-            <span class="u-style-027">🍚</span>
-            <span class="u-style-028">식당</span>
-      </div>
-      <div class="u-style-029">
-            <div class="u-style-030">
-                  <span class="u-style-031">매장명</span>
-                  <span class="u-style-031">장소</span>
-                  <span class="u-style-031">운영시간</span>
-            </div>
-            <div class="u-style-032">
-                  <div class="store-row store-row-shaded">
-                        <span class="u-style-034">국제관 식당</span>
-                        <span class="u-style-035">국제관</span>
-                        <span class="u-style-035">08:00~18:40</span>
-                  </div>
-            </div>
-      </div>
-</div>
-</div>
-</div>
-<!-- 구덕캠퍼스 -->
-<div>
-      <div class="u-style-021">
-            <div class="campus-marker marker-brown"></div>
-            <h3 class="u-style-023">구덕캠퍼스</h3>
-      </div>
-      <div class="u-style-024">
-<!-- 편의점 -->
-<div class="u-style-025">
-      <div class="u-style-026 store-header-cvs">
-            <span class="u-style-027">🛒</span>
-            <span class="u-style-028">편의점 (쿱스켓)</span>
-      </div>
-      <div class="u-style-029">
-            <div class="u-style-030">
-                  <span class="u-style-031">매장명</span>
-                  <span class="u-style-031">장소</span>
-                  <span class="u-style-031">운영시간</span>
-            </div>
-            <div class="u-style-032">
-                  <div class="store-row store-row-shaded">
-                        <span class="u-style-034">학생지원관 매점</span>
-                        <span class="u-style-035">학생지원관</span>
-                        <span class="u-style-035">24시간</span>
-                  </div>
-            </div>
-      </div>
-</div>
-<!-- 식당 -->
-<div class="u-style-025">
-      <div class="u-style-026 store-header-rest">
-            <span class="u-style-027">🍚</span>
-            <span class="u-style-028">식당</span>
-      </div>
-      <div class="u-style-029">
-            <div class="u-style-030">
-                  <span class="u-style-031">매장명</span>
-                  <span class="u-style-031">장소</span>
-                  <span class="u-style-031">운영시간</span>
-            </div>
-            <div class="u-style-032">
-                  <div class="store-row store-row-shaded">
-                        <span class="u-style-034">학생지원관 식당</span>
-                        <span class="u-style-035">학생지원관</span>
-                        <span class="u-style-035">09:00~17:00</span>
-                  </div>
-            </div>
-      </div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section class="u-style-038" id="menu">
-      <p class="section-label u-style-039">Weekly Menu</p>
-      <h2 class="section-title u-style-039">이번 주 메뉴</h2>
-      <div class="divider u-style-040"></div>
-      <p class="section-desc u-style-041">매주 업데이트되는 학생식당 주간 메뉴를 확인하세요.</p>
-      <a class="btn-green u-style-042" href="https://www.donga.ac.kr/kor/CMS/DietMenuMgr/list.do?mCode=MN199">
-        주간메뉴 바로보기
-        <span class="external-icon">↗</span>
-  </a>
-</section>
-<!-- CONTACT -->
-<section class="u-style-043" id="contact">
-      <p class="section-label">Contact</p>
-      <h2 class="section-title">고객센터</h2>
-      <div class="divider"></div>
-      <div class="u-style-044">
-            <div class="contact-row contact-row-baseline">
-                  <span class="u-style-046">주소</span>
-                  <span class="u-style-047">부산광역시 사하구 낙동대로 550번길 37<br/>동아대학교 학생회관 106호</span>
-            </div>
-            <div class="contact-row">
-                  <span class="u-style-046">전화</span>
-                  <a class="u-style-049" href="tel:051-200-6152">051-200-6152</a>
-            </div>
-            <div class="contact-row">
-                  <span class="u-style-046">팩스</span>
-                  <span class="u-style-050">051-204-3599</span>
-            </div>
-            <div class="contact-row contact-row-last">
-                  <span class="u-style-046">운영시간</span>
-                  <span class="u-style-050">평일 08:30 – 17:30 <span class="u-style-052">주말·공휴일 휴무</span></span>
-            </div>
-      </div>
-</section>
-<!-- FOOTER -->
-<footer>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="section-container footer-inner footer-rich">
       <div>
-            <div class="footer-logo">동아대학교 생활협동조합</div>
-            <div class="footer-copy">
-                  부산광역시 사하구 낙동대로 550번길 37 학생회관 106호<br/>
-                  Tel. 051-200-6152  |  Fax. 051-204-3599<br/>
-                  © 2025 Dong-A University Cooperative. All rights reserved.
-            </div>
+        <a class="footer-brand" href="#top">
+          <span>동아대학교 생활협동조합</span>
+          <small>Dong-A University Co-op</small>
+        </a>
+        <p class="footer-copy">
+          부산광역시 사하구 낙동대로 550번길 37 학생회관 106호<br />
+          Tel. 051-200-6152 &nbsp;|&nbsp; Fax. 051-204-3599<br />
+          © 2026 Dong-A University Cooperative. All rights reserved.
+        </p>
       </div>
       <div class="footer-links">
-            <a href="#intro">생협 소개</a>
-            <a href="#membership">조합원 안내</a>
-            <a href="#stores">매장현황</a>
-            <a href="#menu">주간메뉴</a>
-            <a href="#contact">고객센터</a>
+        <a href="#intro">생협 소개</a>
+        <a href="#membership">조합원 안내</a>
+        <a href="#stores">매장현황</a>
+        <a href="#menu">주간메뉴</a>
+        <a href="#contact">고객센터</a>
       </div>
-</footer>
-<script>
-  (function () {
-    var toggle = document.querySelector('.nav-toggle');
-    var links = document.querySelector('.nav-links');
-    if (!toggle || !links) return;
+    </div>
+  </footer>
+
+  <script>
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    const navItems = document.querySelectorAll('.nav-links a');
+
     function closeMenu() {
-      links.classList.remove('open');
-      toggle.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-      toggle.setAttribute('aria-label', '메뉴 열기');
+      navToggle.classList.remove('open');
+      navLinks.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.setAttribute('aria-label', '메뉴 열기');
     }
-    toggle.addEventListener('click', function () {
-      var isOpen = links.classList.toggle('open');
-      toggle.classList.toggle('open', isOpen);
-      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      toggle.setAttribute('aria-label', isOpen ? '메뉴 닫기' : '메뉴 열기');
+
+    navToggle.addEventListener('click', () => {
+      const isOpen = navToggle.classList.toggle('open');
+      navLinks.classList.toggle('open', isOpen);
+      navToggle.setAttribute('aria-expanded', String(isOpen));
+      navToggle.setAttribute('aria-label', isOpen ? '메뉴 닫기' : '메뉴 열기');
     });
-    // 메뉴 항목 클릭 시 자동으로 닫기
-    links.querySelectorAll('a').forEach(function (a) {
-      a.addEventListener('click', closeMenu);
+
+    navItems.forEach((item) => {
+      item.addEventListener('click', closeMenu);
     });
-  })();
-</script>
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900) {
+        closeMenu();
+      }
+    });
+  </script>
 </body>
 </html>
