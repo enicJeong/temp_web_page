@@ -1044,3 +1044,32 @@ th {
     font-size: 0.875rem;
   }
 }
+
+/* Desktop only: align the three campus columns row-by-row so that
+   편의점 ↔ 편의점, 카페 ↔ 카페, 식당 ↔ 식당 headers sit at the same height.
+   Uses CSS subgrid: .campus-grid defines 4 rows (h3 + 3 store-cards) and
+   each .campus-block becomes a subgrid spanning those rows. The tallest
+   card in each row sets the row height; shorter cards align to the top
+   (align-self: start) so the next card starts at the next row line. */
+@media (min-width: 901px) {
+  .campus-grid {
+    grid-template-rows: auto auto auto auto;
+  }
+
+  .campus-block {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 4;
+    row-gap: 18px;
+  }
+
+  .campus-block > h3 {
+    margin-bottom: 0;
+    align-self: end;
+  }
+
+  .campus-block > .store-card {
+    margin-bottom: 0;
+    align-self: start;
+  }
+}
