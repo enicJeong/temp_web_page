@@ -139,6 +139,7 @@
       top: 0;
     }
     td { padding: 9px 12px; border-bottom: 1px solid #edf0f7; color: #333; }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; }
     tr:last-child td { border-bottom: none; }
     tr.clickable:hover td { background: #eef2fa; cursor: pointer; }
     tr.highlight-yellow td { background: #fff8e1; }
@@ -265,7 +266,7 @@
   <h1>KNSU 배당금 관리자</h1>
   <div style="display:flex;align-items:center;gap:12px;">
     <div class="admin-email" id="admin-email-display">—</div>
-    <a href="/cdn-cgi/access/logout" class="logout-btn" onclick="handleLogout(event)">로그아웃</a>
+    <a href="/cdn-cgi/access/logout" class="logout-btn">로그아웃</a>
   </div>
 </div>
 
@@ -308,6 +309,7 @@
     <div class="toolbar">
       <input type="text" id="search-input" placeholder="이름 또는 전화번호 검색" onkeydown="if(event.key==='Enter')searchMembers()" />
       <button class="btn btn-primary" onclick="searchMembers()">검색</button>
+      <button class="btn btn-gray" onclick="clearSearch()">초기화</button>
       <button class="btn btn-success" onclick="downloadExcel()">📥 엑셀 다운로드</button>
     </div>
     <div class="toolbar" style="margin-bottom:8px;gap:6px;">
@@ -364,7 +366,7 @@
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th>IP</th><th>전화번호</th><th>결과</th><th>일시</th></tr>
+          <tr><th>IP</th><th>전화번호</th><th>이름</th><th>결과</th><th>일시</th></tr>
         </thead>
         <tbody id="recent-log-tbody">
           <tr class="loading-row"><td colspan="4">로딩 중...</td></tr>
@@ -439,19 +441,6 @@ let downloadLogPage = 1;
 const DOWNLOAD_PAGE_SIZE = 20;
 
 // ─── 로그아웃 ────────────────────────────────────────────────────
-function handleLogout(e) {
-  e.preventDefault();
-  // CF Access 쿠키 전체 삭제
-  ['CF_Authorization', 'CF_AppSession'].forEach(name => {
-    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + location.hostname;
-    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-  });
-  // Access 로그아웃 엔드포인트 호출 후 홈으로
-  fetch('/cdn-cgi/access/logout', { credentials: 'include' })
-    .catch(() => {})
-    .finally(() => { window.location.href = '/'; });
-}
-
 // ─── 한국시간 포맷 ───────────────────────────────────────────────
 function fmtKST(str) {
   if (!str || str === '—') return '—';
@@ -472,6 +461,14 @@ function fmtKST(str) {
 
 // ─── 초기 로드 ───────────────────────────────────────────────────
 (async function init() {
+  // JWT에서 이메일 파싱
+  try {
+    const jwt = document.cookie.match(/CF_Authorization=([^;]+)/)?.[1];
+    if (jwt) {
+      const payload = JSON.parse(atob(jwt.split('.')[1]));
+      if (payload.email) document.getElementById('admin-email-display').textContent = payload.email;
+    }
+  } catch {}
   await loadStats();
   await loadMembers(1, '');
 })();
@@ -524,6 +521,15 @@ function setFilter(method) {
   loadMembers(1, currentSearch);
 }
 
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  currentSearch = '';
+  currentMethod = '';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('filter-all').classList.add('active');
+  loadMembers(1, '');
+}
+
 function searchMembers() {
   currentSearch = document.getElementById('search-input').value.trim();
   loadMembers(1, currentSearch);
@@ -552,12 +558,12 @@ async function loadMembers(page, search) {
         <td>${esc(r.name)}</td>
         <td>${esc(r.phone)}</td>
         <td>${methodBadge(r.method)}</td>
-        <td>${fmt(r.div_capital)}</td>
-        <td>${fmt(r.div_usage)}</td>
-        <td>${fmt(r.div_total)}</td>
-        <td>${fmt(r.tax_income)}</td>
-        <td>${fmt(r.tax_local)}</td>
-        <td>${fmt(r.div_net)}</td>
+        <td class="num">${fmt(r.div_capital)}</td>
+        <td class="num">${fmt(r.div_usage)}</td>
+        <td class="num">${fmt(r.div_total)}</td>
+        <td class="num">${fmt(r.tax_income)}</td>
+        <td class="num">${fmt(r.tax_local)}</td>
+        <td class="num">${fmt(r.div_net)}</td>
         <td>${esc(r.applicant_name)}</td>
         <td>${esc(r.bank)}</td>
         <td>${esc(r.account)}</td>
@@ -794,6 +800,7 @@ function renderLookupRecentPage(page) {
         <tr>
           <td>${esc(r.ip)}</td>
           <td>${esc(r.phone) || '—'}</td>
+          <td>${esc(r.name) || '—'}</td>
           <td>${resultLabel[r.result] || r.result}</td>
           <td>${fmtKST(r.logged_at)}</td>
         </tr>`).join('');

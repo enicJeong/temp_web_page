@@ -41,9 +41,10 @@ export async function onRequestGet(context) {
 
   const { results: recentLogs } = await db
     .prepare(
-      `SELECT id, ip, phone, result, logged_at
-       FROM lookup_logs
-       ORDER BY logged_at DESC
+      `SELECT l.id, l.ip, l.phone, l.result, l.logged_at, m.name
+       FROM lookup_logs l
+       LEFT JOIN members m ON l.phone = m.phone
+       ORDER BY l.logged_at DESC
        LIMIT 100`
     )
     .all();
