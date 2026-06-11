@@ -265,7 +265,7 @@
   <h1>KNSU 배당금 관리자</h1>
   <div style="display:flex;align-items:center;gap:12px;">
     <div class="admin-email" id="admin-email-display">—</div>
-    <a href="https://wild-silence-4ca0.cloudflareaccess.com/cdn-cgi/access/logout" class="logout-btn">로그아웃</a>
+    <a href="https://wild-silence-4ca0.cloudflareaccess.com/cdn-cgi/access/logout?returnTo=https://member.uneedcoop.com/knsu" class="logout-btn">로그아웃</a>
   </div>
 </div>
 
@@ -820,11 +820,19 @@ async function apiFetch(path, options = {}) {
     ...options,
   });
   const data = await res.json();
-  if (res.status === 401 || res.status === 403) {
-    document.body.innerHTML = `<div style="padding:40px;text-align:center;font-size:16px;">
-      접근 권한이 없습니다. (${data.error || res.status})
-    </div>`;
+  if (res.status === 401) {
+    if (data.redirect) {
+      // 세션 만료 - 페이지 새로고침으로 Access 재인증
+      alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+      window.location.reload();
+    } else {
+      document.body.innerHTML = `<div style="padding:40px;text-align:center;font-size:16px;">인증이 필요합니다.</div>`;
+    }
     throw new Error('Unauthorized');
+  }
+  if (res.status === 403) {
+    document.body.innerHTML = `<div style="padding:40px;text-align:center;font-size:16px;">접근 권한이 없습니다. (${data.error || res.status})</div>`;
+    throw new Error('Forbidden');
   }
   return data;
 }
