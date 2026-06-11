@@ -11,7 +11,7 @@
 
   <!-- 헤더 -->
   <div class="header">
-    <div class="coop-name">한국체육대학교 생활협동조합</div>
+    <img src="/logo.png" alt="한국체육대학교 소비자생활협동조합" class="header-logo" />
     <h1>2025년 사업 결산<br>배당금 조회</h1>
   </div>
 
@@ -212,6 +212,11 @@
       </div>
     </div>
   </div>
+  <!-- 푸터 -->
+  <div class="footer">
+    <div>한국체육대학교 소비자생활협동조합</div>
+    <div>출자금 문의 : <a href="tel:0241006975">02-410-6975</a></div>
+  </div>
 </div><!-- /container -->
 
 <script>
@@ -297,6 +302,7 @@ async function doLookup() {
     state.member = data.member;
     state.existing = data.existing;
     state.reapplyConfirmed = false;
+    collapseNotice();
     renderResult();
     showSection('section-result');
 

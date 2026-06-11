@@ -27,7 +27,7 @@
     .header h1 {
       font-size: 20px;
       font-weight: 700;
-      color: #003087;
+      color: #006B54;
       line-height: 1.4;
     }
 
@@ -46,11 +46,11 @@
       margin-bottom: 12px;
     }
     .notice-box .notice-section:last-child { margin-bottom: 0; }
-    .notice-box strong { color: #003087; }
+    .notice-box strong { color: #006B54; }
     .notice-box .notice-title {
       font-weight: 700;
       font-size: 13px;
-      color: #003087;
+      color: #006B54;
       margin-bottom: 4px;
     }
 
@@ -65,7 +65,7 @@
     .card-title {
       font-size: 15px;
       font-weight: 700;
-      color: #003087;
+      color: #006B54;
       margin-bottom: 16px;
     }
 
@@ -90,7 +90,7 @@
       transition: border-color .2s;
     }
     .form-group input:focus {
-      border-color: #003087;
+      border-color: #006B54;
     }
 
     /* 버튼 */
@@ -105,14 +105,14 @@
       transition: background .2s, opacity .2s;
     }
     .btn-primary {
-      background: #003087;
+      background: #006B54;
       color: #fff;
     }
-    .btn-primary:hover { background: #002070; }
-    .btn-primary:disabled { background: #9aabcc; cursor: not-allowed; }
+    .btn-primary:hover { background: #005443; }
+    .btn-primary:disabled { background: #80b5a8; cursor: not-allowed; }
     .btn-secondary {
       background: #e8ecf5;
-      color: #003087;
+      color: #006B54;
       margin-top: 8px;
     }
     .btn-secondary:hover { background: #d6ddf0; }
@@ -151,7 +151,7 @@
     .dividend-table .total-row td {
       font-size: 15px;
       font-weight: 700;
-      color: #003087;
+      color: #006B54;
       padding-top: 12px;
     }
     .dividend-table .tax-row td { color: #c0392b; }
@@ -175,11 +175,11 @@
       text-align: center;
       transition: all .2s;
     }
-    .method-btn:hover { border-color: #003087; color: #003087; }
+    .method-btn:hover { border-color: #006B54; color: #006B54; }
     .method-btn.selected {
-      border-color: #003087;
+      border-color: #006B54;
       background: #eef2fa;
-      color: #003087;
+      color: #006B54;
     }
     .method-btn .method-icon { font-size: 22px; display: block; margin-bottom: 4px; }
     .method-btn .method-sub { font-size: 11px; font-weight: 400; color: #888; margin-top: 2px; }
@@ -204,7 +204,7 @@
       height: 17px;
       margin-top: 2px;
       flex-shrink: 0;
-      accent-color: #003087;
+      accent-color: #006B54;
       cursor: pointer;
     }
     .consent-item label {
@@ -213,7 +213,7 @@
       cursor: pointer;
       color: #333;
     }
-    .consent-item label strong { color: #003087; }
+    .consent-item label strong { color: #006B54; }
     .consent-detail {
       font-size: 11px;
       color: #777;
@@ -243,7 +243,7 @@
     .success-title {
       font-size: 18px;
       font-weight: 700;
-      color: #003087;
+      color: #006B54;
       margin-bottom: 8px;
     }
     .success-desc { font-size: 14px; color: #555; line-height: 1.7; }
@@ -278,7 +278,7 @@
     }
     .dividend-card-header .toggle-icon {
       font-size: 18px;
-      color: #003087;
+      color: #006B54;
       transition: transform .3s;
     }
     .dividend-card-header.collapsed .toggle-icon {
@@ -318,7 +318,7 @@
     .modal-title {
       font-size: 16px;
       font-weight: 700;
-      color: #003087;
+      color: #006B54;
       margin-bottom: 16px;
       text-align: center;
     }
@@ -332,7 +332,7 @@
     .modal-row:last-of-type { border-bottom: none; }
     .modal-row .modal-label { color: #666; }
     .modal-row .modal-value { font-weight: 600; color: #1a1a2e; }
-    .modal-row .modal-value.highlight { color: #003087; }
+    .modal-row .modal-value.highlight { color: #006B54; }
     .modal-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -343,7 +343,7 @@
 /* 공지 드랍다운 */
 #notice-toggle-icon {
   font-size: 18px;
-  color: #003087;
+  color: #006B54;
   transition: transform .3s;
   flex-shrink: 0;
 }
@@ -363,3 +363,31 @@
   cursor: pointer;
   user-select: none;
 }
+
+/* 헤더 로고 */
+.header-logo {
+  display: block;
+  margin: 0 auto 14px;
+  height: 56px;
+  width: auto;
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 8px 16px;
+}
+
+/* 푸터 */
+.footer {
+  margin-top: 32px;
+  padding: 18px 0 8px;
+  border-top: 1px solid #dde3f0;
+  text-align: center;
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.footer a {
+  color: #006B54;
+  text-decoration: none;
+  font-weight: 600;
+}
+.footer a:hover { text-decoration: underline; }
