@@ -40,7 +40,7 @@ export async function onRequestPost(context) {
     return jsonResponse({ ok: false, error: '일치하는 정보가 없습니다.' }, 403);
   }
 
-  const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+  const now = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().replace('T', ' ').substring(0, 19);
   const phoneChanged = normalizePhone(body.phone_changed ?? '') || null;
 
   if (method === 'capital') {

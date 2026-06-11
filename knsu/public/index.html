@@ -17,11 +17,11 @@
 
   <!-- 공지 (드랍다운) -->
   <div class="notice-box" id="notice-box">
-    <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;" onclick="toggleNotice()">
+    <div class="notice-header" onclick="toggleNotice()">
       <strong style="color:#003087;font-size:14px;">배당금 지급 안내</strong>
-      <span id="notice-toggle-icon" style="font-size:18px;color:#003087;transition:transform .3s;">▾</span>
+      <span id="notice-toggle-icon">▾</span>
     </div>
-    <div id="notice-body" style="overflow:hidden;transition:max-height .3s ease,opacity .3s ease;max-height:600px;opacity:1;margin-top:10px;">
+    <div id="notice-body" style="max-height:600px;opacity:1;margin-top:10px;">
     <div class="notice-section">
       <div class="notice-title">배당금 지급 기준</div>
       ○ <strong>출자배당금:</strong> 2026. 2. 28. 현재 조합원인 자 중 배당금 지급일(2026. 7월 둘째 주 예상)까지 조합원 자격을 유지하고 있는 자<br>
