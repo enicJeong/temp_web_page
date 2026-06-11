@@ -160,6 +160,7 @@
       justify-content: center;
       margin-top: 14px;
       flex-wrap: wrap;
+      row-gap: 6px;
     }
     .page-btn {
       padding: 6px 11px;
@@ -171,6 +172,19 @@
     }
     .page-btn.active { background: #003087; color: #fff; border-color: #003087; }
     .page-btn:hover:not(.active) { background: #eef2fa; }
+    .page-input {
+      width: 52px;
+      padding: 5px 6px;
+      border: 1px solid #dde3f0;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: 'Nanum Gothic Coding', monospace;
+      text-align: center;
+      outline: none;
+      color: #1a1a2e;
+    }
+    .page-input:focus { border-color: #003087; }
+    .page-sep { padding: 6px 4px; font-size: 13px; color: #aaa; }
     .page-info { font-size: 13px; color: #777; text-align: right; margin-bottom: 8px; }
 
     /* 업로드 */
@@ -697,15 +711,15 @@ function renderPagination(elId, current, total, onPage) {
   const el = document.getElementById(elId);
   if (total <= 1) { el.innerHTML = ''; return; }
 
+  const fnStr = onPage.toString();
   let html = '';
-  const start = Math.max(1, current - 3);
-  const end = Math.min(total, current + 3);
 
-  if (current > 1) html += `<button class="page-btn" onclick="(${onPage.toString()})(${current-1})">‹</button>`;
-  for (let p = start; p <= end; p++) {
-    html += `<button class="page-btn ${p===current?'active':''}" onclick="(${onPage.toString()})(${p})">${p}</button>`;
+  html += `<button class="page-btn" ${current===1?'disabled':''} onclick="(${fnStr})(${current-1})">‹</button>`;
+  for (let p = 1; p <= total; p++) {
+    html += `<button class="page-btn ${p===current?'active':''}" onclick="(${fnStr})(${p})">${p}</button>`;
   }
-  if (current < total) html += `<button class="page-btn" onclick="(${onPage.toString()})(${current+1})">›</button>`;
+  html += `<button class="page-btn" ${current===total?'disabled':''} onclick="(${fnStr})(${current+1})">›</button>`;
+
   el.innerHTML = html;
 }
 
