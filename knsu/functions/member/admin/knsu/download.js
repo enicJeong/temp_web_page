@@ -1,61 +1,67 @@
 // functions/member/admin/knsu/download.js
 // GET /member/admin/knsu/download
-// 전체 데이터 JSON 반환 (주민번호 복호화 포함)
-// 프론트엔드에서 SheetJS로 xlsx 생성
-// 다운로드마다 로그 자동 기록
 
 export async function onRequestGet(context) {
   const { env } = context;
   const db = env.DB;
-  const adminEmail = context.data.adminEmail;
+  const adminEmail = context.data.adminEmail ?? 'unknown';
 
-  const { results } = await db
-    .prepare(
-      `SELECT
-         m.phone, m.name,
-         m.div_capital, m.div_usage, m.div_total,
-         m.tax_income, m.tax_local, m.div_net,
-         a.method, a.applicant_name, a.bank, a.account,
-         a.ssn_encrypted, a.ssn_iv,
-         a.consent1_at, a.consent2_at, a.consent3_at,
-         a.phone_changed, a.capital_at,
-         a.applied_at, a.updated_at
-       FROM members m
-       LEFT JOIN applications a ON m.phone = a.phone
-       ORDER BY m.phone`
-    )
-    .all();
+  try {
+    const { results } = await db
+      .prepare(
+        `SELECT
+           m.phone, m.name,
+           m.div_capital, m.div_usage, m.div_total,
+           m.tax_income, m.tax_local, m.div_net,
+           a.method, a.applicant_name, a.bank, a.account,
+           a.ssn_encrypted, a.ssn_iv,
+           a.consent1_at, a.consent2_at, a.consent3_at,
+           a.phone_changed, a.capital_at,
+           a.applied_at, a.updated_at
+         FROM members m
+         LEFT JOIN applications a ON m.phone = a.phone
+         ORDER BY m.phone`
+      )
+      .all();
 
-  const rows = results ?? [];
+    const rows = results ?? [];
 
-  // 주민번호 복호화
-  const decryptedRows = await Promise.all(
-    rows.map(async (row) => {
-      const r = { ...row };
-      if (row.ssn_encrypted && row.ssn_iv) {
-        try {
-          r.ssn = await decryptSSN(row.ssn_encrypted, row.ssn_iv, env.ENCRYPTION_KEY);
-        } catch {
-          r.ssn = '복호화 오류';
+    // 주민번호 복호화 (ENCRYPTION_KEY 없으면 null 처리)
+    const encKey = env.ENCRYPTION_KEY ?? null;
+    const decryptedRows = await Promise.all(
+      rows.map(async (row) => {
+        const r = { ...row };
+        if (row.ssn_encrypted && row.ssn_iv && encKey) {
+          try {
+            r.ssn = await decryptSSN(row.ssn_encrypted, row.ssn_iv, encKey);
+          } catch (e) {
+            r.ssn = '복호화 오류';
+          }
+        } else {
+          r.ssn = null;
         }
-      } else {
-        r.ssn = null;
-      }
-      delete r.ssn_encrypted;
-      delete r.ssn_iv;
-      return r;
-    })
-  );
+        delete r.ssn_encrypted;
+        delete r.ssn_iv;
+        return r;
+      })
+    );
 
-  // 다운로드 로그 기록
-  await db
-    .prepare(
-      `INSERT INTO download_logs (email, row_count) VALUES (?, ?)`
-    )
-    .bind(adminEmail, rows.length)
-    .run();
+    // 다운로드 로그 기록
+    try {
+      await db
+        .prepare(`INSERT INTO download_logs (email, row_count) VALUES (?, ?)`)
+        .bind(adminEmail, rows.length)
+        .run();
+    } catch (e) {
+      console.error('download log insert failed:', e);
+    }
 
-  return jsonResponse({ ok: true, rows: decryptedRows });
+    return jsonResponse({ ok: true, rows: decryptedRows });
+
+  } catch (e) {
+    console.error('download error:', e);
+    return jsonResponse({ ok: false, error: String(e?.message ?? e) }, 500);
+  }
 }
 
 // ─── AES-256-GCM 복호화 ───────────────────────────────────────────
