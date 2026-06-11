@@ -139,7 +139,7 @@
       top: 0;
     }
     td { padding: 9px 12px; border-bottom: 1px solid #edf0f7; color: #333; }
-    td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; font-family: "Consolas", "Courier New", monospace; letter-spacing: 0; }
     tr:last-child td { border-bottom: none; }
     tr.clickable:hover td { background: #eef2fa; cursor: pointer; }
     tr.highlight-yellow td { background: #fff8e1; }
@@ -550,7 +550,7 @@ async function loadMembers(page, search) {
       <tr class="clickable" onclick="openDetailModal(${i})" data-idx="${i}">
         <td>${fmtKST(r.applied_at)}</td>
         <td>${esc(r.name)}</td>
-        <td>${esc(r.phone)}</td>
+        <td class="num">${esc(r.phone)}</td>
         <td>${methodBadge(r.method)}</td>
         <td class="num">${fmt(r.div_capital)}</td>
         <td class="num">${fmt(r.div_usage)}</td>
