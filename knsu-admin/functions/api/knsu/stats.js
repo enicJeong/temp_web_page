@@ -18,6 +18,7 @@ export async function onRequestGet(context) {
 
   return jsonResponse({
     ok: true,
+    email: context.data.adminEmail ?? null,
     stats: {
       total: totalCount,
       cash: cashCount,

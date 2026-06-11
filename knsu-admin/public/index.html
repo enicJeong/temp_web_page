@@ -461,14 +461,6 @@ function fmtKST(str) {
 
 // ─── 초기 로드 ───────────────────────────────────────────────────
 (async function init() {
-  // JWT에서 이메일 파싱
-  try {
-    const jwt = document.cookie.match(/CF_Authorization=([^;]+)/)?.[1];
-    if (jwt) {
-      const payload = JSON.parse(atob(jwt.split('.')[1]));
-      if (payload.email) document.getElementById('admin-email-display').textContent = payload.email;
-    }
-  } catch {}
   await loadStats();
   await loadMembers(1, '');
 })();
@@ -488,6 +480,8 @@ async function loadStats() {
       document.getElementById('stat-capital').textContent = data.stats.capital.toLocaleString();
       document.getElementById('stat-pending').textContent = pending.toLocaleString();
       document.getElementById('stat-progress').textContent = progress + '%';
+
+      if (data.email) document.getElementById('admin-email-display').textContent = data.email;
     }
   } catch {}
 }
