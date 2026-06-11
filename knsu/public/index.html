@@ -4,350 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>배당금 조회 — 한국체육대학교 생활협동조합</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
-      background: #f4f6f9;
-      color: #1a1a2e;
-      min-height: 100vh;
-      padding: 24px 16px 60px;
-      font-size: clamp(15px, 4vw, 18px);
-    }
-
-    .container {
-      max-width: 540px;
-      margin: 0 auto;
-    }
-
-    /* 헤더 */
-    .header {
-      text-align: center;
-      margin-bottom: 28px;
-    }
-    .header .coop-name {
-      font-size: 13px;
-      color: #555;
-      margin-bottom: 4px;
-    }
-    .header h1 {
-      font-size: 20px;
-      font-weight: 700;
-      color: #003087;
-      line-height: 1.4;
-    }
-
-    /* 공지 박스 */
-    .notice-box {
-      background: #fff;
-      border: 1px solid #dde3f0;
-      border-radius: 10px;
-      padding: 18px 20px;
-      margin-bottom: 20px;
-      font-size: 13px;
-      line-height: 1.8;
-      color: #333;
-    }
-    .notice-box .notice-section {
-      margin-bottom: 12px;
-    }
-    .notice-box .notice-section:last-child { margin-bottom: 0; }
-    .notice-box strong { color: #003087; }
-    .notice-box .notice-title {
-      font-weight: 700;
-      font-size: 13px;
-      color: #003087;
-      margin-bottom: 4px;
-    }
-
-    /* 카드 */
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 24px 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 1px 6px rgba(0,0,0,.07);
-    }
-    .card-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #003087;
-      margin-bottom: 16px;
-    }
-
-    /* 폼 */
-    .form-group {
-      margin-bottom: 14px;
-    }
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: #444;
-      margin-bottom: 6px;
-    }
-    .form-group input {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #ccd3e0;
-      border-radius: 8px;
-      font-size: 15px;
-      outline: none;
-      transition: border-color .2s;
-    }
-    .form-group input:focus {
-      border-color: #003087;
-    }
-
-    /* 버튼 */
-    .btn {
-      width: 100%;
-      padding: 13px;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background .2s, opacity .2s;
-    }
-    .btn-primary {
-      background: #003087;
-      color: #fff;
-    }
-    .btn-primary:hover { background: #002070; }
-    .btn-primary:disabled { background: #9aabcc; cursor: not-allowed; }
-    .btn-secondary {
-      background: #e8ecf5;
-      color: #003087;
-      margin-top: 8px;
-    }
-    .btn-secondary:hover { background: #d6ddf0; }
-    .btn-danger {
-      background: #fff;
-      color: #c0392b;
-      border: 1px solid #c0392b;
-      margin-top: 8px;
-    }
-
-    /* 오류 메시지 */
-    .error-msg {
-      color: #c0392b;
-      font-size: 13px;
-      margin-top: 8px;
-      display: none;
-    }
-    .error-msg.show { display: block; }
-
-    /* 배당금 내역 */
-    .dividend-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-    .dividend-table tr td {
-      padding: 9px 4px;
-      border-bottom: 1px solid #edf0f7;
-    }
-    .dividend-table tr:last-child td { border-bottom: none; }
-    .dividend-table td:first-child { color: #555; }
-    .dividend-table td:last-child {
-      text-align: right;
-      font-weight: 600;
-    }
-    .dividend-table .total-row td {
-      font-size: 15px;
-      font-weight: 700;
-      color: #003087;
-      padding-top: 12px;
-    }
-    .dividend-table .tax-row td { color: #c0392b; }
-
-    /* 수령 방법 선택 */
-    .method-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-    .method-btn {
-      padding: 14px 10px;
-      border: 2px solid #ccd3e0;
-      border-radius: 10px;
-      background: #fff;
-      font-size: 14px;
-      font-weight: 600;
-      color: #555;
-      cursor: pointer;
-      text-align: center;
-      transition: all .2s;
-    }
-    .method-btn:hover { border-color: #003087; color: #003087; }
-    .method-btn.selected {
-      border-color: #003087;
-      background: #eef2fa;
-      color: #003087;
-    }
-    .method-btn .method-icon { font-size: 22px; display: block; margin-bottom: 4px; }
-    .method-btn .method-sub { font-size: 11px; font-weight: 400; color: #888; margin-top: 2px; }
-
-    /* 동의 항목 */
-    .consent-group {
-      border: 1px solid #dde3f0;
-      border-radius: 8px;
-      overflow: hidden;
-      margin-bottom: 14px;
-    }
-    .consent-item {
-      padding: 12px 14px;
-      border-bottom: 1px solid #edf0f7;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-    .consent-item:last-child { border-bottom: none; }
-    .consent-item input[type="checkbox"] {
-      width: 17px;
-      height: 17px;
-      margin-top: 2px;
-      flex-shrink: 0;
-      accent-color: #003087;
-      cursor: pointer;
-    }
-    .consent-item label {
-      font-size: 13px;
-      line-height: 1.6;
-      cursor: pointer;
-      color: #333;
-    }
-    .consent-item label strong { color: #003087; }
-    .consent-detail {
-      font-size: 11px;
-      color: #777;
-      margin-top: 3px;
-    }
-
-    /* 재신청 경고 */
-    .reapply-warning {
-      background: #fff8e1;
-      border: 1px solid #f0c040;
-      border-radius: 8px;
-      padding: 12px 14px;
-      font-size: 13px;
-      color: #7a5000;
-      margin-bottom: 14px;
-      display: none;
-    }
-    .reapply-warning.show { display: block; }
-    .reapply-warning strong { display: block; margin-bottom: 4px; }
-
-    /* 완료 화면 */
-    .success-screen {
-      text-align: center;
-      padding: 20px 0 8px;
-    }
-    .success-icon { font-size: 48px; margin-bottom: 12px; }
-    .success-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: #003087;
-      margin-bottom: 8px;
-    }
-    .success-desc { font-size: 14px; color: #555; line-height: 1.7; }
-
-    /* 섹션 숨김 */
-    .section { display: none; }
-    .section.active { display: block; }
-
-    /* 로딩 스피너 */
-    .spinner {
-      display: inline-block;
-      width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,.4);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin .6s linear infinite;
-      vertical-align: middle;
-      margin-right: 6px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .divider { border: none; border-top: 1px solid #edf0f7; margin: 16px 0; }
-
-    .optional-label { font-size: 11px; color: #999; font-weight: 400; margin-left: 4px; }
-    /* 배당금 내역 드랍다운 */
-    .dividend-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      user-select: none;
-    }
-    .dividend-card-header .toggle-icon {
-      font-size: 18px;
-      color: #003087;
-      transition: transform .3s;
-    }
-    .dividend-card-header.collapsed .toggle-icon {
-      transform: rotate(-90deg);
-    }
-    .dividend-card-body {
-      overflow: hidden;
-      transition: max-height .3s ease, opacity .3s ease;
-      max-height: 400px;
-      opacity: 1;
-    }
-    .dividend-card-body.collapsed {
-      max-height: 0;
-      opacity: 0;
-    }
-
-    /* 확인 모달 */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.5);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-    .modal-overlay.show { display: flex; }
-    .modal-box {
-      background: #fff;
-      border-radius: 14px;
-      padding: 24px 20px;
-      width: 100%;
-      max-width: 440px;
-      box-shadow: 0 8px 32px rgba(0,0,0,.2);
-    }
-    .modal-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #003087;
-      margin-bottom: 16px;
-      text-align: center;
-    }
-    .modal-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid #edf0f7;
-      font-size: 14px;
-    }
-    .modal-row:last-of-type { border-bottom: none; }
-    .modal-row .modal-label { color: #666; }
-    .modal-row .modal-value { font-weight: 600; color: #1a1a2e; }
-    .modal-row .modal-value.highlight { color: #003087; }
-    .modal-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-top: 18px;
-    }
-
-  </style>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <div class="container">
@@ -358,11 +15,16 @@
     <h1>2025년 사업 결산<br>배당금 조회</h1>
   </div>
 
-  <!-- 공지 -->
-  <div class="notice-box">
+  <!-- 공지 (드랍다운) -->
+  <div class="notice-box" id="notice-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;" onclick="toggleNotice()">
+      <strong style="color:#003087;font-size:14px;">배당금 지급 안내</strong>
+      <span id="notice-toggle-icon" style="font-size:18px;color:#003087;transition:transform .3s;">▾</span>
+    </div>
+    <div id="notice-body" style="overflow:hidden;transition:max-height .3s ease,opacity .3s ease;max-height:600px;opacity:1;margin-top:10px;">
     <div class="notice-section">
       <div class="notice-title">배당금 지급 기준</div>
-      ○ <strong>출자배당금:</strong> 2026. 2. 28. 현재 조합원인 자 중 배당금 지급일(2026. 7월 초 예상)까지 조합원 자격을 유지하고 있는 자<br>
+      ○ <strong>출자배당금:</strong> 2026. 2. 28. 현재 조합원인 자 중 배당금 지급일(2026. 7월 둘째 주 예상)까지 조합원 자격을 유지하고 있는 자<br>
       ○ <strong>사용실적배당금:</strong> 출자배당금 기준을 충족하면서, 2025. 3. 1.~2026. 2. 28. 기간 내 생협 사업장(식당, 카페)에서 포인트를 적립한 자
     </div>
     <div class="notice-section">
@@ -375,8 +37,9 @@
       ○ 배당소득세의 경우 1,000원 이상일 시 적용, 국세(14%) 지방세(1.4%)를 반영하여 세금 총 15.4% 원천징수됨<br>
       ○ 배당금 현금수령 희망 시 아래에서 개인정보를 기입해 주세요.<br>
       &nbsp;&nbsp;※ 개인정보는 배당금 지급 완료 및 원천세 신고 완료 즉시 파기함<br>
-      ○ 배당금 현금지급 미신청 시 지급액 1만원 단위로 출자금 증좌<br>
+      ○ <strong>배당금 현금지급 미신청 시 지급액 1만원 단위로 출자금 증좌</strong><br>
       &nbsp;&nbsp;※ 추후 개인정보 제공해 지급 요청 시 미지급배당금 차액 현금지급
+    </div>
     </div>
   </div>
 
@@ -581,6 +244,17 @@ function goBack() {
   showSection('section-result');
 }
 
+// ─── 한국시간 포맷 ──────────────────────────────────────────────
+function fmtKST(str) {
+  if (!str || str === '—') return '—';
+  try {
+    const d = str.includes('T') ? new Date(str) : new Date(str.replace(' ', 'T') + '+09:00');
+    const p = n => String(n).padStart(2, '0');
+    const yy = String(d.getFullYear()).slice(2);
+    return `${yy}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  } catch { return str; }
+}
+
 // ─── 숫자 포맷 ───────────────────────────────────────────────────
 function fmt(n) {
   return Number(n).toLocaleString('ko-KR') + '원';
@@ -652,7 +326,7 @@ function renderResult() {
   if (state.existing && !state.reapplyConfirmed) {
     const methodLabel = state.existing.method === 'cash' ? '현금수령' : '출자금 반영';
     document.getElementById('reapply-desc').textContent =
-      `신청 방법: ${methodLabel} / 신청일: ${state.existing.applied_at}`;
+      `신청 방법: ${methodLabel} / 신청일: ${fmtKST(state.existing.applied_at)}`;
     warningEl.classList.add('show');
     methodCard.style.display = 'none';
   } else {
@@ -682,6 +356,8 @@ function selectMethod(method) {
   document.getElementById('method-error').classList.remove('show');
 
   // 잠깐 후 다음 섹션으로
+  // 공지 박스 닫기
+  collapseNotice();
   // 배당금 내역 박스 닫기
   collapseDividend();
 
@@ -719,6 +395,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') doLookup();
   });
 });
+
+// ─── 공지 드랍다운 ───────────────────────────────────────────────
+function toggleNotice() {
+  const body = document.getElementById('notice-body');
+  const icon = document.getElementById('notice-toggle-icon');
+  const isOpen = body.style.maxHeight !== '0px';
+  body.style.maxHeight = isOpen ? '0px' : '600px';
+  body.style.opacity = isOpen ? '0' : '1';
+  icon.classList.toggle('collapsed', isOpen);
+}
+function collapseNotice() {
+  const body = document.getElementById('notice-body');
+  const icon = document.getElementById('notice-toggle-icon');
+  body.style.maxHeight = '0px';
+  body.style.opacity = '0';
+  icon.classList.add('collapsed');
+}
 
 // ─── 배당금 드랍다운 ──────────────────────────────────────────────
 function toggleDividend() {
@@ -763,8 +456,7 @@ function openConfirmModal() {
   document.getElementById('modal-name').textContent = name;
   document.getElementById('modal-bank').textContent = bank;
   document.getElementById('modal-account').textContent = account;
-  const ssnDisplay = document.getElementById('cash-ssn').value.slice(0, 8) + '******';
-  document.getElementById('modal-ssn').textContent = ssnDisplay;
+  document.getElementById('modal-ssn').textContent = document.getElementById('cash-ssn').value;
 
   document.getElementById('confirm-modal').classList.add('show');
 }
@@ -884,11 +576,11 @@ function showDone(method) {
   if (method === 'cash') {
     document.getElementById('done-title').textContent = '현금수령 신청이 완료되었습니다';
     document.getElementById('done-desc').innerHTML =
-      '입력하신 계좌로 배당금이 지급될 예정입니다.<br>지급 예정일: <strong>2026. 7월 둘째 주 예상</strong><br><br>개인정보는 원천세 신고 완료 후 즉시 파기됩니다.';
+      '입력하신 계좌로 배당금이 지급될 예정입니다.<br>지급 예정일: <strong>2026년 7월 둘째 주</strong><br><br>개인정보는 원천세 신고 완료 후 즉시 파기됩니다.';
   } else {
     document.getElementById('done-title').textContent = '출자금 반영 신청이 완료되었습니다';
     document.getElementById('done-desc').innerHTML =
-      '배당금이 출자금으로 반영될 예정입니다.<br>반영 예정일: <strong>2026년 7월 초</strong>';
+      '배당금이 출자금으로 반영될 예정입니다.<br>반영 예정일: <strong>2026년 7월 둘째 주</strong>';
   }
   showSection('section-done');
 }
