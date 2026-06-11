@@ -1,4 +1,6 @@
 /knsu /index.html 200
+/knsu/ /index.html 200
 /admin/knsu /admin.html 200
+/admin/knsu/ /admin.html 200
 /admin/knsu/* /admin.html 200
 / /knsu 302
