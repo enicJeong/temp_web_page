@@ -391,3 +391,31 @@
   font-weight: 600;
 }
 .footer a:hover { text-decoration: underline; }
+
+/* 전화번호 변경 드랍다운 */
+.phone-change-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: #f4f6f9;
+  border: 1px solid #dde3f0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 0;
+}
+.phone-change-toggle:hover { background: #eef2fa; color: #006B54; }
+.phone-change-body {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height .3s ease, opacity .3s ease;
+}
+.phone-change-body.open {
+  max-height: 100px;
+  opacity: 1;
+}

@@ -73,29 +73,37 @@ export async function onRequestPost(context) {
   const applicantName = (body.applicant_name ?? '').trim();
   const bank = (body.bank ?? '').trim();
   const account = (body.account ?? '').trim();
-  const ssn = (body.ssn ?? '').replace(/\D/g, '');
   const consent1At = body.consent1_at ?? null;
   const consent2At = body.consent2_at ?? null;
   const consent3At = body.consent3_at ?? null;
 
+  // 클라이언트 암호화 SSN
+  const ssnEncryptedClient = body.ssn_encrypted ?? null;
+  const ssnIvClient = body.ssn_iv ?? null;
+  const ssnKeyClient = body.ssn_key ?? null;
+
   if (!applicantName || !bank || !account) {
     return jsonResponse({ ok: false, error: '이름, 은행명, 계좌번호를 모두 입력해주세요.' }, 400);
   }
-  if (ssn.length !== 13) {
-    return jsonResponse({ ok: false, error: '주민등록번호를 올바르게 입력해주세요.' }, 400);
+  if (!ssnEncryptedClient || !ssnIvClient || !ssnKeyClient) {
+    return jsonResponse({ ok: false, error: '주민등록번호 정보가 올바르지 않습니다.' }, 400);
   }
   if (!consent1At || !consent2At || !consent3At) {
     return jsonResponse({ ok: false, error: '필수 동의 항목을 모두 체크해주세요.' }, 400);
   }
 
-  // 주민번호 AES-256-GCM 암호화
+  // 클라이언트 세션키로 복호화 → 서버 ENCRYPTION_KEY로 재암호화
   let ssnEncrypted, ssnIv;
   try {
-    const { encrypted, iv } = await encryptSSN(ssn, env.ENCRYPTION_KEY);
+    const ssn = await decryptWithSessionKey(ssnEncryptedClient, ssnIvClient, ssnKeyClient);
+    if (!ssn || ssn.replace(/\D/g,'').length !== 13) {
+      return jsonResponse({ ok: false, error: '주민등록번호를 올바르게 입력해주세요.' }, 400);
+    }
+    const { encrypted, iv } = await encryptSSN(ssn.replace(/\D/g,''), env.ENCRYPTION_KEY);
     ssnEncrypted = encrypted;
     ssnIv = iv;
   } catch (e) {
-    console.error('SSN encryption failed:', e);
+    console.error('SSN processing failed:', e);
     return jsonResponse({ ok: false, error: '서버 오류가 발생했습니다.' }, 500);
   }
 
@@ -130,6 +138,18 @@ export async function onRequestPost(context) {
     .run();
 
   return jsonResponse({ ok: true, method: 'cash' });
+}
+
+// ─── 클라이언트 세션키 복호화 ─────────────────────────────────────
+async function decryptWithSessionKey(encryptedB64, ivB64, keyB64) {
+  const keyBytes = base64ToBytes(keyB64);
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw', keyBytes, { name: 'AES-GCM' }, false, ['decrypt']
+  );
+  const iv = base64ToBytes(ivB64);
+  const cipher = base64ToBytes(encryptedB64);
+  const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, cryptoKey, cipher);
+  return new TextDecoder().decode(plain);
 }
 
 // ─── AES-256-GCM 암호화 ───────────────────────────────────────────
