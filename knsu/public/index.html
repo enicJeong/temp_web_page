@@ -281,7 +281,8 @@ function fmt(n) {
 
 // ─── STEP 1: 본인 확인 ──────────────────────────────────────────
 async function doLookup() {
-  const name = document.getElementById('input-name').value.trim();
+  const rawName = document.getElementById('input-name').value.trim();
+  const name = /[a-zA-Z]/.test(rawName) ? rawName.replace(/\s+/g, '').toUpperCase() : rawName;
   const phone = document.getElementById('input-phone').value.replace(/\D/g, '');
   const errEl = document.getElementById('lookup-error');
   const btn = document.getElementById('btn-lookup');
