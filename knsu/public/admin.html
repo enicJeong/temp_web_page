@@ -182,6 +182,19 @@
     .upload-result.err { background: #fdecea; color: #922b21; display: block; }
 
     .loading-row td { text-align: center; color: #999; padding: 30px; }
+    .filter-btn {
+      padding: 6px 14px;
+      border: 1px solid #dde3f0;
+      border-radius: 20px;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      color: #666;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .filter-btn:hover { border-color: #006B54; color: #006B54; }
+    .filter-btn.active { background: #006B54; color: #fff; border-color: #006B54; }
     .empty-row td { text-align: center; color: #bbb; padding: 30px; }
 
     /* 세부정보 모달 */
@@ -282,6 +295,12 @@
       <input type="text" id="search-input" placeholder="이름 또는 전화번호 검색" onkeydown="if(event.key==='Enter')searchMembers()" />
       <button class="btn btn-primary" onclick="searchMembers()">검색</button>
       <button class="btn btn-success" onclick="downloadExcel()">📥 엑셀 다운로드</button>
+    </div>
+    <div class="toolbar" style="margin-bottom:8px;">
+      <button class="filter-btn active" id="filter-all" onclick="setFilter('')">전체</button>
+      <button class="filter-btn" id="filter-cash" onclick="setFilter('cash')">현금수령</button>
+      <button class="filter-btn" id="filter-capital" onclick="setFilter('capital')">출자금반영</button>
+      <button class="filter-btn" id="filter-pending" onclick="setFilter('pending')">미신청</button>
     </div>
     <div class="page-info" id="members-page-info"></div>
     <div class="table-wrap">
@@ -388,6 +407,7 @@
 const BASE = '/admin/knsu';
 let currentPage = 1;
 let currentSearch = '';
+let currentMethod = '';
 let membersTotal = 0;
 
 // 로그 페이지네이션 상태
@@ -456,6 +476,14 @@ function switchTab(name) {
 }
 
 // ─── 신청 목록 ───────────────────────────────────────────────────
+function setFilter(method) {
+  currentMethod = method;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  const map = { '': 'filter-all', 'cash': 'filter-cash', 'capital': 'filter-capital', 'pending': 'filter-pending' };
+  document.getElementById(map[method])?.classList.add('active');
+  loadMembers(1, currentSearch);
+}
+
 function searchMembers() {
   currentSearch = document.getElementById('search-input').value.trim();
   loadMembers(1, currentSearch);
@@ -466,7 +494,7 @@ async function loadMembers(page, search) {
   const tbody = document.getElementById('members-tbody');
   tbody.innerHTML = '<tr class="loading-row"><td colspan="18">로딩 중...</td></tr>';
 
-  const params = new URLSearchParams({ page, ...(search ? { search } : {}) });
+  const params = new URLSearchParams({ page, ...(search ? { search } : {}), ...(currentMethod ? { method: currentMethod } : {}) });
   const data = await apiFetch(`/members?${params}`);
 
   membersTotal = data.total ?? 0;
@@ -507,6 +535,7 @@ async function loadMembers(page, search) {
 
   renderPagination('members-pagination', page, data.total_pages ?? 1,
     p => loadMembers(p, currentSearch));
+
 }
 
 // ─── 세부정보 모달 ───────────────────────────────────────────────
