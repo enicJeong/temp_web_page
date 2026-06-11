@@ -1,7 +1,5 @@
 // functions/knsu/lookup.js
 // POST /knsu/lookup
-// Body: { phone: string, name: string }
-// 본인확인 후 배당금 내역 + 기존 신청 여부 반환
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -28,20 +26,21 @@ export async function onRequestPost(context) {
     .bind(phone)
     .first();
 
-  // 이름 불일치 또는 미존재 — 동일 오류 메시지
+  // 이름 불일치 또는 미존재
   if (!member || member.name !== name) {
-    await db
-      .prepare(`INSERT INTO lookup_logs (ip, phone, result) VALUES (?, ?, 'mismatch')`)
-      .bind(ip, phone)
-      .run();
+    // 로그 비동기 처리 (응답 속도에 영향 없음)
+    context.waitUntil(
+      db.prepare(`INSERT INTO lookup_logs (ip, phone, result) VALUES (?, ?, 'mismatch')`)
+        .bind(ip, phone).run()
+    );
     return jsonResponse({ ok: false, error: '일치하는 정보가 없습니다.' }, 404);
   }
 
-  // 성공 로그
-  await db
-    .prepare(`INSERT INTO lookup_logs (ip, phone, result) VALUES (?, ?, 'success')`)
-    .bind(ip, phone)
-    .run();
+  // 성공 로그 비동기 처리
+  context.waitUntil(
+    db.prepare(`INSERT INTO lookup_logs (ip, phone, result) VALUES (?, ?, 'success')`)
+      .bind(ip, phone).run()
+  );
 
   // 기존 신청 여부 확인
   const existing = await db
@@ -67,7 +66,6 @@ export async function onRequestPost(context) {
   });
 }
 
-// 전화번호 정규화: 숫자만 추출
 function normalizePhone(raw) {
   return raw.replace(/\D/g, '');
 }
