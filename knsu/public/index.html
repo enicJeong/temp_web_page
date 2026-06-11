@@ -55,6 +55,7 @@
         <label for="input-phone">전화번호</label>
         <input type="tel" id="input-phone" placeholder="01012345678" autocomplete="tel" inputmode="numeric" />
       </div>
+      <p class="foreign-hint">* For foreign nationals, please enter your name without spaces.</p>
       <div class="error-msg" id="lookup-error"></div>
       <button class="btn btn-primary" id="btn-lookup" onclick="doLookup()">배당금 조회</button>
     </div>
@@ -77,6 +78,7 @@
           <tr class="tax-row"><td>지방소득세</td><td id="val-tax-local">—</td></tr>
           <tr class="total-row"><td>실제수령액</td><td id="val-div-net">—</td></tr>
         </table>
+        <div class="dividend-phone-row"><span>조회 전화번호</span><span id="val-phone">—</span></div>
       </div>
     </div>
 
@@ -337,6 +339,7 @@ function renderResult() {
   document.getElementById('val-tax-income').textContent = m.tax_income > 0 ? '- ' + fmt(m.tax_income) : '해당 없음';
   document.getElementById('val-tax-local').textContent = m.tax_local > 0 ? '- ' + fmt(m.tax_local) : '해당 없음';
   document.getElementById('val-div-net').textContent = fmt(m.div_net);
+  document.getElementById('val-phone').textContent = state.phone.replace(/(\d{3})(\d{3,4})(\d{4})/, '$1-$2-$3');
 
   // 재신청 경고
   const warningEl = document.getElementById('reapply-warning');
