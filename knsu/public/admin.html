@@ -308,7 +308,7 @@
   <div id="panel-lookup-logs" class="panel">
     <div class="toolbar">
       <span style="font-size:13px;color:#555;font-weight:600;">IP별 조회 현황 (5회 이상 노란색 강조)</span>
-      <button class="btn btn-gray" onclick="downloadLogTxt('lookup')">📄 TXT 다운로드</button>
+      <button class="btn btn-gray" onclick="downloadLogTxt('lookup')">📄 CSV 다운로드</button>
     </div>
     <div class="table-wrap" style="margin-bottom:16px;">
       <table>
@@ -341,7 +341,7 @@
   <div id="panel-download-logs" class="panel">
     <div class="toolbar">
       <span style="font-size:13px;color:#555;font-weight:600;">엑셀 다운로드 이력</span>
-      <button class="btn btn-gray" onclick="downloadLogTxt('download')">📄 TXT 다운로드</button>
+      <button class="btn btn-gray" onclick="downloadLogTxt('download')">📄 CSV 다운로드</button>
     </div>
     <div class="page-info" id="download-page-info"></div>
     <div class="table-wrap">
@@ -706,31 +706,31 @@ function renderDownloadLogPage(page) {
 // ─── TXT 다운로드 ────────────────────────────────────────────────
 function downloadLogTxt(type) {
   const now = new Date().toISOString().slice(0,10);
+  const toCSV = rows => rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   let text = '';
   let filename = '';
 
   if (type === 'lookup') {
-    filename = `KNSU_조회로그_${now}.txt`;
-    text = '=== IP별 조회 현황 ===\n';
-    text += 'IP\t전체\t성공\t불일치\t차단\t마지막조회\n';
+    filename = `KNSU_조회로그_${now}.csv`;
+    const ipRows = [['IP','전체','성공','불일치','차단','마지막조회']];
     (window._lookupByIp || []).forEach(r => {
-      text += `${r.ip}\t${r.total}\t${r.success}\t${r.mismatch}\t${r.rate_limited}\t${fmtKST(r.last_at)}\n`;
+      ipRows.push([r.ip, r.total, r.success, r.mismatch, r.rate_limited, fmtKST(r.last_at)]);
     });
-    text += '\n=== 최근 조회 기록 ===\n';
-    text += 'IP\t전화번호\t결과\t일시\n';
+    const recentRows = [['IP','전화번호','결과','일시']];
     lookupRecentAll.forEach(r => {
-      text += `${r.ip}\t${r.phone||''}\t${r.result}\t${fmtKST(r.logged_at)}\n`;
+      recentRows.push([r.ip, r.phone || '', r.result, fmtKST(r.logged_at)]);
     });
+    text = 'IP별 조회 현황\n' + toCSV(ipRows) + '\n\n최근 조회 기록\n' + toCSV(recentRows);
   } else {
-    filename = `KNSU_다운로드로그_${now}.txt`;
-    text = '=== 엑셀 다운로드 이력 ===\n';
-    text += '이메일\t행수\t일시\n';
+    filename = `KNSU_다운로드로그_${now}.csv`;
+    const dlRows = [['이메일','행수','일시']];
     downloadLogsAll.forEach(r => {
-      text += `${r.email}\t${r.row_count}\t${fmtKST(r.downloaded_at)}\n`;
+      dlRows.push([r.email, r.row_count, fmtKST(r.downloaded_at)]);
     });
+    text = toCSV(dlRows);
   }
 
-  const blob = new Blob(['\uFEFF' + text], { type: 'text/plain;charset=utf-8' });
+  const blob = new Blob(['\uFEFF' + text], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = filename;
