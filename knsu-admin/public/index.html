@@ -310,11 +310,15 @@
       <button class="btn btn-primary" onclick="searchMembers()">검색</button>
       <button class="btn btn-success" onclick="downloadExcel()">📥 엑셀 다운로드</button>
     </div>
-    <div class="toolbar" style="margin-bottom:8px;">
+    <div class="toolbar" style="margin-bottom:8px;gap:6px;">
       <button class="filter-btn active" id="filter-all" onclick="setFilter('')">전체</button>
       <button class="filter-btn" id="filter-cash" onclick="setFilter('cash')">현금수령</button>
       <button class="filter-btn" id="filter-capital" onclick="setFilter('capital')">출자금반영</button>
       <button class="filter-btn" id="filter-pending" onclick="setFilter('pending')">미신청</button>
+      <div style="margin-left:auto;display:flex;gap:4px;">
+        <button class="filter-btn active" id="sort-date" onclick="setSort('date')" title="신청일 최신순">📅 최신순</button>
+        <button class="filter-btn" id="sort-name" onclick="setSort('name')" title="이름 가나다순">가나다</button>
+      </div>
     </div>
     <div class="page-info" id="members-page-info"></div>
     <div class="table-wrap">
@@ -340,7 +344,7 @@
   <!-- 조회 로그 탭 -->
   <div id="panel-lookup-logs" class="panel">
     <div class="toolbar">
-      <span style="font-size:13px;color:#555;font-weight:600;">IP별  조회 현황 (5회 이상 노란색 강조)</span>
+      <span style="font-size:13px;color:#555;font-weight:600;">IP별 조회 현황 (5회 이상 노란색 강조)</span>
       <button class="btn btn-gray" onclick="downloadLogTxt('lookup')">📄 CSV 다운로드</button>
     </div>
     <div class="table-wrap" style="margin-bottom:16px;">
@@ -422,6 +426,7 @@ const BASE = '/api/knsu';
 let currentPage = 1;
 let currentSearch = '';
 let currentMethod = '';
+let currentSort = 'date';
 let membersTotal = 0;
 
 // 로그 페이지네이션 상태
@@ -436,9 +441,15 @@ const DOWNLOAD_PAGE_SIZE = 20;
 // ─── 로그아웃 ────────────────────────────────────────────────────
 function handleLogout(e) {
   e.preventDefault();
-  // CF_Authorization 쿠키 삭제
-  document.cookie = 'CF_Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-  window.location.href = '/cdn-cgi/access/logout';
+  // CF Access 쿠키 전체 삭제
+  ['CF_Authorization', 'CF_AppSession'].forEach(name => {
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + location.hostname;
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  });
+  // Access 로그아웃 엔드포인트 호출 후 홈으로
+  fetch('/cdn-cgi/access/logout', { credentials: 'include' })
+    .catch(() => {})
+    .finally(() => { window.location.href = '/'; });
 }
 
 // ─── 한국시간 포맷 ───────────────────────────────────────────────
@@ -498,6 +509,13 @@ function switchTab(name) {
 }
 
 // ─── 신청 목록 ───────────────────────────────────────────────────
+function setSort(sort) {
+  currentSort = sort;
+  document.getElementById('sort-date').classList.toggle('active', sort === 'date');
+  document.getElementById('sort-name').classList.toggle('active', sort === 'name');
+  loadMembers(1, currentSearch);
+}
+
 function setFilter(method) {
   currentMethod = method;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -516,7 +534,7 @@ async function loadMembers(page, search) {
   const tbody = document.getElementById('members-tbody');
   tbody.innerHTML = '<tr class="loading-row"><td colspan="18">로딩 중...</td></tr>';
 
-  const params = new URLSearchParams({ page, ...(search ? { search } : {}), ...(currentMethod ? { method: currentMethod } : {}) });
+  const params = new URLSearchParams({ page, ...(search ? { search } : {}), ...(currentMethod ? { method: currentMethod } : {}), sort: currentSort });
   const data = await apiFetch(`/members?${params}`);
 
   membersTotal = data.total ?? 0;
@@ -564,43 +582,104 @@ async function loadMembers(page, search) {
 function openDetailModal(idx) {
   const r = window._memberRows?.[idx];
   if (!r) return;
+  window._currentDetailIdx = idx;
+  window._currentDetailPhone = r.phone;
 
   const methodLabel = r.method === 'cash' ? '현금수령' : r.method === 'capital' ? '출자금반영' : '미신청';
-  const rows = [
-    ['이름', r.name, true],
-    ['전화번호', r.phone],
-    ['수령방법', methodLabel, true],
-    ['─── 배당금 내역 ───', ''],
-    ['출자배당금', fmt(r.div_capital) + '원'],
-    ['사용실적배당금', fmt(r.div_usage) + '원'],
-    ['배당총액', fmt(r.div_total) + '원', true],
-    ['배당소득세', fmt(r.tax_income) + '원'],
-    ['지방소득세', fmt(r.tax_local) + '원'],
-    ['실수령액', fmt(r.div_net) + '원', true],
-    ['─── 신청 정보 ───', ''],
-    ['예금주', r.applicant_name],
-    ['은행', r.bank],
-    ['계좌번호', r.account],
-    ['주민번호', r.ssn_masked],
-    ['변경전화번호', r.phone_changed],
-    ['─── 동의 ───', ''],
-    ['개인정보수집동의', fmtKST(r.consent1_at)],
-    ['고유식별정보동의', fmtKST(r.consent2_at)],
-    ['3자동의', fmtKST(r.consent3_at)],
-    ['─── 일시 ───', ''],
-    ['신청일시', fmtKST(r.applied_at)],
-    ['수정일시', fmtKST(r.updated_at)],
+  const ssnDisplay = r.ssn_masked ?? '—';
+
+  document.getElementById('modal-content').innerHTML = renderModalRows(r, methodLabel, ssnDisplay, false);
+  document.getElementById('detail-modal').classList.add('show');
+}
+
+function renderModalRows(r, methodLabel, ssnDisplay, editMode) {
+  const phoneVal = editMode
+    ? `<input type="tel" id="modal-phone-input" value="${esc(r.phone)}" style="padding:4px 8px;border:1.5px solid #006B54;border-radius:6px;font-size:13px;width:150px;" inputmode="numeric" />`
+    : `${esc(r.phone)} <button onclick="startPhoneEdit()" style="margin-left:8px;padding:2px 8px;font-size:11px;background:#006B54;color:#fff;border:none;border-radius:4px;cursor:pointer;">수정</button>`;
+
+  const phoneActionRow = editMode ? `
+    <div style="display:flex;gap:6px;margin-top:10px;">
+      <button onclick="savePhoneEdit('${r.phone}')" style="flex:1;padding:8px;background:#006B54;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;">저장</button>
+      <button onclick="cancelPhoneEdit()" style="flex:1;padding:8px;background:#eee;color:#333;border:none;border-radius:6px;font-size:13px;cursor:pointer;">취소</button>
+    </div>` : '';
+
+  const sections = [
+    { label: '이름', value: esc(r.name), hl: true },
+    { label: '전화번호', value: phoneVal, hl: false, raw: true },
+    { label: '수령방법', value: esc(methodLabel), hl: true },
+    { divider: '배당금 내역' },
+    { label: '출자배당금', value: fmt(r.div_capital) + '원' },
+    { label: '사용실적배당금', value: fmt(r.div_usage) + '원' },
+    { label: '배당총액', value: fmt(r.div_total) + '원', hl: true },
+    { label: '배당소득세', value: fmt(r.tax_income) + '원' },
+    { label: '지방소득세', value: fmt(r.tax_local) + '원' },
+    { label: '실수령액', value: fmt(r.div_net) + '원', hl: true },
+    { divider: '신청 정보' },
+    { label: '예금주', value: esc(r.applicant_name ?? '—') },
+    { label: '은행', value: esc(r.bank ?? '—') },
+    { label: '계좌번호', value: esc(r.account ?? '—') },
+    { label: '주민번호', value: `<span id="modal-ssn-val">${esc(ssnDisplay)}</span>`, raw: true },
+    { label: '변경전화번호', value: esc(r.phone_changed ?? '—') },
+    { divider: '동의' },
+    { label: '개인정보수집동의', value: esc(fmtKST(r.consent1_at)) },
+    { label: '고유식별정보동의', value: esc(fmtKST(r.consent2_at)) },
+    { label: '3자동의', value: esc(fmtKST(r.consent3_at)) },
+    { divider: '일시' },
+    { label: '신청일시', value: esc(fmtKST(r.applied_at)) },
+    { label: '수정일시', value: esc(fmtKST(r.updated_at)) },
   ];
 
-  document.getElementById('modal-content').innerHTML = rows.map(([label, value, hl]) => {
-    if (value === '') return `<div style="font-size:11px;color:#aaa;padding:8px 0 2px;font-weight:600;">${esc(label)}</div>`;
+  return sections.map(s => {
+    if (s.divider) return `<div style="font-size:11px;color:#aaa;padding:8px 0 2px;font-weight:700;letter-spacing:.05em;">${s.divider.toUpperCase()}</div>`;
     return `<div class="modal-row">
-      <span class="modal-label">${esc(label)}</span>
-      <span class="modal-value${hl ? ' highlight' : ''}">${esc(value ?? '—')}</span>
+      <span class="modal-label">${s.label}</span>
+      <span class="modal-value${s.hl ? ' highlight' : ''}">${s.raw ? s.value : s.value}</span>
     </div>`;
-  }).join('');
+  }).join('') + phoneActionRow;
+}
 
-  document.getElementById('detail-modal').classList.add('show');
+function startPhoneEdit() {
+  const idx = window._currentDetailIdx;
+  const r = window._memberRows?.[idx];
+  if (!r) return;
+  const methodLabel = r.method === 'cash' ? '현금수령' : r.method === 'capital' ? '출자금반영' : '미신청';
+  const ssnVal = document.getElementById('modal-ssn-val')?.textContent ?? r.ssn_masked ?? '—';
+  document.getElementById('modal-content').innerHTML = renderModalRows(r, methodLabel, ssnVal, true);
+}
+
+function cancelPhoneEdit() {
+  const idx = window._currentDetailIdx;
+  const r = window._memberRows?.[idx];
+  if (!r) return;
+  const methodLabel = r.method === 'cash' ? '현금수령' : r.method === 'capital' ? '출자금반영' : '미신청';
+  const ssnVal = document.getElementById('modal-ssn-val')?.textContent ?? r.ssn_masked ?? '—';
+  document.getElementById('modal-content').innerHTML = renderModalRows(r, methodLabel, ssnVal, false);
+}
+
+async function savePhoneEdit(originalPhone) {
+  const newPhone = document.getElementById('modal-phone-input')?.value?.replace(/\D/g,'');
+  if (!newPhone || newPhone.length < 10) { alert('올바른 전화번호를 입력해주세요.'); return; }
+  if (newPhone === originalPhone) { cancelPhoneEdit(); return; }
+
+  try {
+    const res = await apiFetch('/members', {
+      method: 'POST',
+      body: JSON.stringify({ phone: originalPhone, new_phone: newPhone }),
+    });
+    if (!res.ok) { alert(res.error || '수정 실패'); return; }
+
+    // 로컬 데이터 업데이트
+    const idx = window._currentDetailIdx;
+    if (window._memberRows?.[idx]) {
+      window._memberRows[idx].phone = newPhone;
+      window._currentDetailPhone = newPhone;
+    }
+    alert('전화번호가 수정되었습니다.');
+    cancelPhoneEdit();
+    loadMembers(currentPage, currentSearch);
+  } catch (e) {
+    alert('오류: ' + e.message);
+  }
 }
 
 function closeDetailModal(e) {

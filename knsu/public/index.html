@@ -51,11 +51,12 @@
         <label for="input-name">이름</label>
         <input type="text" id="input-name" placeholder="홍길동" autocomplete="name" />
       </div>
+      <p class="foreign-hint">* For foreign nationals, please enter your name without spaces.</p>
+    
       <div class="form-group">
         <label for="input-phone">전화번호</label>
         <input type="tel" id="input-phone" placeholder="01012345678" autocomplete="tel" inputmode="numeric" />
       </div>
-      <p class="foreign-hint">* For foreign nationals, please enter your name without spaces.</p>
       <div class="error-msg" id="lookup-error"></div>
       <button class="btn btn-primary" id="btn-lookup" onclick="doLookup()">배당금 조회</button>
     </div>
@@ -70,6 +71,7 @@
         <span class="toggle-icon">▾</span>
       </div>
       <div class="dividend-card-body" id="dividend-body">
+        <div class="dividend-phone-row"><span>조회 전화번호</span><span id="val-phone">—</span></div>
         <table class="dividend-table" style="margin-top:14px;">
           <tr><td>출자배당금</td><td id="val-div-capital">—</td></tr>
           <tr><td>사용실적배당금</td><td id="val-div-usage">—</td></tr>
@@ -78,7 +80,7 @@
           <tr class="tax-row"><td>지방소득세</td><td id="val-tax-local">—</td></tr>
           <tr class="total-row"><td>실제수령액</td><td id="val-div-net">—</td></tr>
         </table>
-        <div class="dividend-phone-row"><span>조회 전화번호</span><span id="val-phone">—</span></div>
+        
       </div>
     </div>
 
