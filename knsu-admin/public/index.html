@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>관리자 — KNSU 배당금 시스템</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding:wght@400;700&display=swap" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -127,7 +128,7 @@
       overflow: auto;
       box-shadow: 0 1px 4px rgba(0,0,0,.07);
     }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; white-space: nowrap; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; white-space: nowrap; font-family: 'Nanum Gothic Coding', 'D2Coding', monospace; }
     th {
       background: #f0f2f7;
       padding: 10px 12px;
@@ -135,10 +136,13 @@
       font-weight: 600;
       color: #555;
       border-bottom: 1px solid #e0e4ef;
+      border-right: 1px solid #e0e4ef;
       position: sticky;
       top: 0;
     }
-    td { padding: 9px 12px; border-bottom: 1px solid #edf0f7; color: #333; }
+    th:last-child { border-right: none; }
+    td { padding: 9px 12px; border-bottom: 1px solid #edf0f7; border-right: 1px solid #edf0f7; color: #333; }
+    td:last-child { border-right: none; }
     td.num { text-align: right; font-variant-numeric: tabular-nums; font-family: "Consolas", "Courier New", monospace; letter-spacing: 0; }
     tr:last-child td { border-bottom: none; }
     tr.clickable:hover td { background: #eef2fa; cursor: pointer; }
