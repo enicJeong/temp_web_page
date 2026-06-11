@@ -26,7 +26,6 @@ export async function onRequest(context) {
     );
   }
 
-  // 인증 이메일을 context.data에 전달
   context.data.adminEmail = email;
   return next();
 }

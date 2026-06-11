@@ -1,5 +1,5 @@
-// functions/member/knsu/lookup.js
-// POST /member/knsu/lookup
+// functions/knsu/lookup.js
+// POST /knsu/lookup
 // Body: { phone: string, name: string }
 // 본인확인 후 배당금 내역 + 기존 신청 여부 반환
 

@@ -385,7 +385,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-const BASE = '/member/admin/knsu';
+const BASE = '/admin/knsu';
 let currentPage = 1;
 let currentSearch = '';
 let membersTotal = 0;
@@ -585,25 +585,25 @@ async function downloadExcel() {
     if (!data.ok) { alert('오류: ' + (data.error || '알 수 없는 오류')); return; }
 
     const rows = data.rows.map(r => ({
-      '신청일시': fmtKST(r.applied_at),
-      '전화번호': r.phone,
-      '이름': r.name,
+      '신청일시': fmtKST(r.applied_at) === '—' ? '' : fmtKST(r.applied_at),
+      '전화번호': r.phone || '',
+      '이름': r.name || '',
       '수령방법': r.method === 'cash' ? '현금수령' : r.method === 'capital' ? '출자금반영' : '',
-      '출자배당금': r.div_capital,
-      '사용실적배당금': r.div_usage,
-      '배당총액': r.div_total,
-      '배당소득세': r.tax_income,
-      '지방소득세': r.tax_local,
-      '실수령액': r.div_net,
+      '출자배당금': r.div_capital ?? '',
+      '사용실적배당금': r.div_usage ?? '',
+      '배당총액': r.div_total ?? '',
+      '배당소득세': r.tax_income ?? '',
+      '지방소득세': r.tax_local ?? '',
+      '실수령액': r.div_net ?? '',
       '예금주': r.applicant_name || '',
       '은행': r.bank || '',
       '계좌번호': r.account || '',
       '주민번호': r.ssn || '',
-      '개인정보수집동의': fmtKST(r.consent1_at),
-      '고유식별정보동의': fmtKST(r.consent2_at),
-      '3자동의': fmtKST(r.consent3_at),
+      '개인정보수집동의': fmtKST(r.consent1_at) === '—' ? '' : fmtKST(r.consent1_at),
+      '고유식별정보동의': fmtKST(r.consent2_at) === '—' ? '' : fmtKST(r.consent2_at),
+      '3자동의': fmtKST(r.consent3_at) === '—' ? '' : fmtKST(r.consent3_at),
       '변경전화번호': r.phone_changed || '',
-      '출자반영일시': fmtKST(r.capital_at),
+      '출자반영일시': fmtKST(r.capital_at) === '—' ? '' : fmtKST(r.capital_at),
     }));
 
     const ws = XLSX.utils.json_to_sheet(rows);

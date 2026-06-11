@@ -1,5 +1,5 @@
-// functions/member/knsu/submit.js
-// POST /member/knsu/submit
+// functions/knsu/submit.js
+// POST /knsu/submit
 // 수령방법 신청 — 서버에서 재인증 후 저장
 // 재신청 시 기존 내용 덮어씌움
 

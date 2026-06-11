@@ -284,7 +284,7 @@ async function doLookup() {
   btn.innerHTML = '<span class="spinner"></span>조회 중...';
 
   try {
-    const res = await fetch('/member/knsu/lookup', {
+    const res = await fetch('/knsu/lookup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phone, name }),
@@ -506,7 +506,7 @@ async function submitCash() {
   btn.innerHTML = '<span class="spinner"></span>신청 중...';
 
   try {
-    const res = await fetch('/member/knsu/submit', {
+    const res = await fetch('/knsu/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -551,7 +551,7 @@ async function submitCapital() {
   btn.innerHTML = '<span class="spinner"></span>신청 중...';
 
   try {
-    const res = await fetch('/member/knsu/submit', {
+    const res = await fetch('/knsu/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
