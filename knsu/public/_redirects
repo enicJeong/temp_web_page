@@ -1,3 +1,5 @@
+/ /index.html 200
 /member/knsu /index.html 200
+/member/knsu/* /index.html 200
 /member/admin/knsu /admin.html 200
 /member/admin/knsu/* /admin.html 200
