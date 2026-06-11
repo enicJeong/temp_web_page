@@ -2,6 +2,5 @@
 /knsu/ /index.html 200
 /admin/knsu /admin.html 200
 /admin/knsu/ /admin.html 200
-/admin/knsu/* /admin.html 200
 /admin /admin/knsu 302
 /admin/ /admin/knsu 302
