@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>한국체육대학교 생활협동조합 배당금 조회</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', '맑은 고딕', sans-serif; background: #f5f7fa; color: #222; min-height: 100vh; }
+
+  .header { background: #1a3c6e; color: white; padding: 22px 20px; text-align: center; }
+  .header h1 { font-size: 1.15rem; font-weight: 700; line-height: 1.55; }
+  .header p { font-size: 0.82rem; margin-top: 6px; opacity: 0.8; }
+
+  .container { max-width: 560px; margin: 0 auto; padding: 20px 16px 40px; }
+
+  .card { background: white; border-radius: 14px; padding: 22px 20px; margin-bottom: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+  .card-title { font-size: 0.95rem; font-weight: 700; color: #1a3c6e; border-bottom: 2px solid #eef1f8; padding-bottom: 10px; margin-bottom: 16px; }
+
+  .form-group { margin-bottom: 13px; }
+  label { display: block; font-size: 0.82rem; color: #555; margin-bottom: 5px; font-weight: 600; }
+  input[type=tel], input[type=text] {
+    width: 100%; padding: 12px 14px; border: 1.5px solid #d5dbe8; border-radius: 9px;
+    font-size: 0.95rem; color: #222; background: #fafbfd; transition: border-color .18s;
+  }
+  input:focus { outline: none; border-color: #1a3c6e; background: white; }
+  input::placeholder { color: #bbb; }
+
+  .btn { width: 100%; padding: 13px; border: none; border-radius: 9px; font-size: 0.97rem; font-weight: 700; cursor: pointer; transition: all .18s; letter-spacing: -0.2px; }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn-primary { background: #1a3c6e; color: white; }
+  .btn-primary:hover:not(:disabled) { background: #14305a; }
+  .btn-ghost { background: #eef1f8; color: #1a3c6e; margin-top: 9px; }
+  .btn-ghost:hover:not(:disabled) { background: #dde3f0; }
+  .btn-cash { background: #1b6b3a; color: white; }
+  .btn-cash:hover:not(:disabled) { background: #145230; }
+  .btn-capital { background: #1a3c6e; color: white; }
+  .btn-capital:hover:not(:disabled) { background: #14305a; }
+
+  /* 배당금 테이블 */
+  .dividend-wrap { margin-bottom: 18px; }
+  .dividend-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f2f4f8; font-size: 0.9rem; }
+  .dividend-row:last-child { border-bottom: none; }
+  .dividend-row .lbl { color: #666; }
+  .dividend-row .val { font-weight: 600; color: #222; }
+  .dividend-row.total { padding-top: 12px; margin-top: 4px; border-top: 2px solid #1a3c6e; border-bottom: none; }
+  .dividend-row.total .lbl { font-weight: 700; color: #1a3c6e; font-size: 0.95rem; }
+  .dividend-row.total .val { font-size: 1.1rem; font-weight: 800; color: #1a3c6e; }
+  .dividend-row.deduct .val { color: #c0392b; }
+
+  /* 수령방법 선택 */
+  .method-btns { display: flex; gap: 10px; margin-top: 6px; }
+  .method-btn {
+    flex: 1; padding: 16px 10px; border: 2px solid #d5dbe8; border-radius: 11px;
+    background: white; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    text-align: center; transition: all .18s; line-height: 1.4;
+  }
+  .method-btn .icon { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+  .method-btn:hover { border-color: #1a3c6e; background: #f0f4ff; }
+  .method-btn.selected { border-color: #1a3c6e; background: #eef1f8; color: #1a3c6e; }
+
+  /* 동의 박스 */
+  .consent-scroll { background: #f8f9fc; border: 1px solid #e0e4ef; border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; font-size: 0.78rem; color: #444; line-height: 1.75; max-height: 130px; overflow-y: auto; }
+  .consent-check { display: flex; align-items: center; gap: 9px; font-size: 0.88rem; font-weight: 600; cursor: pointer; padding: 4px 0; }
+  .consent-check input[type=checkbox] { width: 17px; height: 17px; cursor: pointer; flex-shrink: 0; }
+
+  /* 알림 */
+  .alert { padding: 11px 14px; border-radius: 8px; font-size: 0.85rem; margin-top: 10px; line-height: 1.5; }
+  .alert-error { background: #fff0f0; color: #c0392b; border: 1px solid #fad4d4; }
+  .alert-success { background: #edfaf1; color: #1b6b3a; border: 1px solid #b7e8c8; }
+  .alert-warning { background: #fffbea; color: #856404; border: 1px solid #ffe484; }
+
+  /* 안내 박스 */
+  .info-box { background: #eef4ff; border-left: 3px solid #1a3c6e; padding: 13px 14px; border-radius: 0 8px 8px 0; font-size: 0.8rem; color: #1a3c6e; line-height: 1.75; margin-bottom: 14px; }
+  .info-box b { display: block; margin-bottom: 3px; font-size: 0.85rem; }
+
+  .notice-sm { font-size: 0.78rem; color: #888; margin-top: 6px; line-height: 1.6; }
+
+  .hidden { display: none !important; }
+
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2.5px solid rgba(255,255,255,.35); border-top-color: white; border-radius: 50%; animation: spin .65s linear infinite; vertical-align: middle; margin-right: 4px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .section-label { font-size: 0.82rem; font-weight: 700; color: #444; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🏫 한국체육대학교 생활협동조합<br>2025년 사업 결산 배당금 조회</h1>
+  <p>전화번호와 생년월일로 본인 확인 후 조회하세요</p>
+</div>
+
+<div class="container">
+
+  <div class="info-box">
+    <b>📋 배당금 지급 기준</b>
+    <b>출자배당금</b> 2026. 2. 28. 현재 조합원 & 지급일(7월 초)까지 자격 유지<br>
+    <b>사용실적배당금</b> 출자배당 기준 충족 + 2025. 3. 1.~2026. 2. 28. 식당·카페 포인트 적립<br>
+    <b>배당율</b> 출자금의 2.78% / 적립포인트의 132%<br>
+    <b>세금</b> 배당소득세 14% + 지방소득세 1.4% (1,000원 이상 시 적용)
+  </div>
+
+  <!-- STEP 1: 본인 확인 -->
+  <div id="step1" class="card">
+    <div class="card-title">🔐 본인 확인</div>
+    <div class="form-group">
+      <label>전화번호</label>
+      <input type="tel" id="phone-input" placeholder="01012345678" maxlength="11">
+    </div>
+    <div class="form-group">
+      <label>생년월일 <span style="font-size:.75rem;color:#999;">(8자리)</span></label>
+      <input type="tel" id="birth-input" placeholder="19901215" maxlength="8">
+    </div>
+    <button class="btn btn-primary" id="lookup-btn" onclick="lookupDividend()">배당금 조회</button>
+    <div id="lookup-error" class="alert alert-error hidden"></div>
+  </div>
+
+  <!-- STEP 2: 배당금 확인 + 수령방법 선택 -->
+  <div id="step2" class="card hidden">
+    <div class="card-title">💰 배당금 내역</div>
+
+    <div class="dividend-wrap" id="dividend-wrap"></div>
+
+    <div id="already-notice" class="alert alert-warning hidden"></div>
+
+    <div id="method-select">
+      <div class="section-label">수령 방법을 선택해주세요</div>
+      <p class="notice-sm" style="margin-bottom:10px;">
+        ※ 현금수령 미신청 시 지급액 1만원 단위로 출자금 자동 증좌됩니다.
+      </p>
+      <div class="method-btns">
+        <button class="method-btn" id="btn-cash" onclick="selectMethod('cash')">
+          <span class="icon">💵</span>
+          현금 수령
+        </button>
+        <button class="method-btn" id="btn-capital" onclick="selectMethod('capital')">
+          <span class="icon">📈</span>
+          출자금 반영
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3A: 현금수령 폼 -->
+  <div id="step3-cash" class="card hidden">
+    <div class="card-title">💵 현금수령 신청</div>
+
+    <div class="form-group">
+      <label>이름 <span style="color:#c0392b">*</span></label>
+      <input type="text" id="name" placeholder="홍길동">
+    </div>
+    <div class="form-group">
+      <label>은행명 <span style="color:#c0392b">*</span></label>
+      <input type="text" id="bank-name" placeholder="예: 국민은행">
+    </div>
+    <div class="form-group">
+      <label>계좌번호 <span style="color:#c0392b">*</span></label>
+      <input type="text" id="account-number" placeholder="'-' 없이 숫자만">
+    </div>
+    <div class="form-group">
+      <label>주민등록번호 <span style="color:#c0392b">*</span> <span style="font-size:.72rem;color:#999;">암호화 저장</span></label>
+      <input type="text" id="ssn" placeholder="YYMMDD-NNNNNNN" maxlength="14">
+    </div>
+    <div class="form-group">
+      <label>전화번호 변경 <span style="font-size:.72rem;color:#999;">변경된 경우에만 입력</span></label>
+      <input type="tel" id="new-phone" placeholder="변경된 전화번호">
+    </div>
+
+    <!-- 동의 1 -->
+    <div class="form-group">
+      <div class="section-label">동의 항목</div>
+      <div class="consent-scroll">
+        <strong>개인정보 수집·이용 동의</strong><br>
+        ○ 수집·이용 목적: 배당금 지급에 필요한 정보<br>
+        ○ 수집 항목: 성명, 휴대전화번호, 은행계좌(은행명, 계좌번호)<br>
+        ○ 보유·이용 기간: 배당금 지급 관련 절차 완료 시까지(원천세 신고 완료 시까지)<br><br>
+        귀하께서는 본 개인정보 수집·이용에 대해 동의하지 않을 수 있습니다. 다만, 동의하지 않을 경우 배당금 현금지급 신청이 불가합니다.
+      </div>
+      <label class="consent-check">
+        <input type="checkbox" id="consent1">
+        개인정보 수집·이용에 동의합니다.
+      </label>
+    </div>
+
+    <!-- 동의 2 -->
+    <div class="form-group">
+      <div class="consent-scroll">
+        <strong>고유식별정보 수집·이용 동의</strong><br>
+        ○ 수집·이용 목적: 배당금 지급에 필요한 정보<br>
+        ○ 수집 항목: 주민등록번호<br>
+        ○ 보유·이용 기간: 배당금 지급 관련 절차 완료 시까지(원천세 신고 완료 시까지)<br><br>
+        귀하께서는 본 고유식별정보 수집·이용에 대해 동의하지 않을 수 있습니다. 다만, 동의하지 않을 경우 배당금 현금지급 신청이 불가합니다.
+      </div>
+      <label class="consent-check">
+        <input type="checkbox" id="consent2">
+        고유식별정보 수집·이용에 동의합니다.
+      </label>
+    </div>
+
+    <!-- 동의 3 -->
+    <div class="form-group">
+      <div class="consent-scroll">
+        <strong>개인정보 및 고유식별정보 제3자 제공 동의</strong><br>
+        ○ 개인정보 제공받는 자: 퍼스트세무법인<br>
+        ○ 개인정보 이용 목적: 배당금의 원천세 신고<br>
+        ○ 제공하는 항목: 성명, 주민등록번호<br>
+        ○ 보유 및 이용 기간: 원천세 신고 완료 시까지<br><br>
+        귀하께서는 개인정보 및 고유식별정보 제3자 제공에 대해 동의하지 않을 수 있습니다. 다만, 동의하지 않을 경우 배당금 현금지급 신청이 불가합니다.
+      </div>
+      <label class="consent-check">
+        <input type="checkbox" id="consent3">
+        개인정보 및 고유식별정보 제3자 제공에 동의합니다.
+      </label>
+    </div>
+
+    <button class="btn btn-cash" id="cash-submit-btn" onclick="submitCash()">현금수령 신청 완료</button>
+    <button class="btn btn-ghost" onclick="goBack()">← 뒤로</button>
+    <div id="cash-error" class="alert alert-error hidden"></div>
+    <div id="cash-success" class="alert alert-success hidden"></div>
+  </div>
+
+  <!-- STEP 3B: 출자금 반영 확인 -->
+  <div id="step3-capital" class="card hidden">
+    <div class="card-title">📈 출자금 반영 신청</div>
+    <div class="alert alert-warning" style="margin-bottom:14px;">
+      배당금 전액을 <strong>출자금으로 반영</strong>합니다.<br>
+      현금 수령을 원하지 않으며, 출자금 증좌에 동의합니다.
+    </div>
+    <div class="form-group">
+      <label>전화번호 변경 <span style="font-size:.72rem;color:#999;">변경된 경우에만 입력</span></label>
+      <input type="tel" id="new-phone-capital" placeholder="변경된 전화번호">
+    </div>
+    <button class="btn btn-capital" id="capital-submit-btn" onclick="submitCapital()">출자금 반영 신청 완료</button>
+    <button class="btn btn-ghost" onclick="goBack()">← 뒤로</button>
+    <div id="capital-error" class="alert alert-error hidden"></div>
+    <div id="capital-success" class="alert alert-success hidden"></div>
+  </div>
+
+</div>
+
+<script>
+  let _phone = '';
+  let _birth = '';
+
+  function fmt(n) {
+    if (n === null || n === undefined || n === '') return '-';
+    return Number(n).toLocaleString('ko-KR') + '원';
+  }
+
+  async function lookupDividend() {
+    const phone = document.getElementById('phone-input').value.replace(/[^0-9]/g, '');
+    const birth = document.getElementById('birth-input').value.replace(/[^0-9]/g, '');
+    const errEl = document.getElementById('lookup-error');
+    errEl.classList.add('hidden');
+
+    if (!phone || phone.length < 10) {
+      errEl.textContent = '올바른 전화번호를 입력해주세요.';
+      errEl.classList.remove('hidden'); return;
+    }
+    if (birth.length !== 8) {
+      errEl.textContent = '생년월일 8자리를 입력해주세요. (예: 19901215)';
+      errEl.classList.remove('hidden'); return;
+    }
+
+    const btn = document.getElementById('lookup-btn');
+    btn.innerHTML = '<span class="spinner"></span>조회 중...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/api/lookup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, birthdate: birth })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        errEl.textContent = data.error;
+        errEl.classList.remove('hidden'); return;
+      }
+
+      _phone = phone;
+      _birth = birth;
+
+      const m = data.member;
+      document.getElementById('dividend-wrap').innerHTML = `
+        <div class="dividend-row"><span class="lbl">출자배당금</span><span class="val">${fmt(m.capital_dividend)}</span></div>
+        <div class="dividend-row"><span class="lbl">사용실적배당금</span><span class="val">${fmt(m.usage_dividend)}</span></div>
+        <div class="dividend-row"><span class="lbl">배당총액</span><span class="val">${fmt(m.total_dividend)}</span></div>
+        <div class="dividend-row deduct"><span class="lbl">배당소득세</span><span class="val">- ${fmt(m.dividend_tax)}</span></div>
+        <div class="dividend-row deduct"><span class="lbl">지방소득세</span><span class="val">- ${fmt(m.local_tax)}</span></div>
+        <div class="dividend-row total"><span class="lbl">실제 수령액</span><span class="val">${fmt(m.actual_amount)}</span></div>
+      `;
+
+      const noticeEl = document.getElementById('already-notice');
+      if (data.existing) {
+        const method = data.existing.payment_method === 'cash' ? '현금수령' : '출자금반영';
+        noticeEl.innerHTML = `⚠️ 이미 <strong>${method}</strong>으로 신청하셨습니다. (${data.existing.submitted_at})<br>재신청 시 기존 내용이 덮어씌워집니다.`;
+        noticeEl.classList.remove('hidden');
+      } else {
+        noticeEl.classList.add('hidden');
+      }
+
+      document.getElementById('step1').classList.add('hidden');
+      document.getElementById('step2').classList.remove('hidden');
+
+    } catch (e) {
+      errEl.textContent = '서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.';
+      errEl.classList.remove('hidden');
+    } finally {
+      btn.innerHTML = '배당금 조회';
+      btn.disabled = false;
+    }
+  }
+
+  function selectMethod(method) {
+    document.getElementById('btn-cash').classList.toggle('selected', method === 'cash');
+    document.getElementById('btn-capital').classList.toggle('selected', method === 'capital');
+    document.getElementById('step2').classList.add('hidden');
+    document.getElementById('step3-' + method).classList.remove('hidden');
+  }
+
+  function goBack() {
+    document.getElementById('step3-cash').classList.add('hidden');
+    document.getElementById('step3-capital').classList.add('hidden');
+    document.getElementById('step2').classList.remove('hidden');
+  }
+
+  async function submitCash() {
+    const errEl = document.getElementById('cash-error');
+    const sucEl = document.getElementById('cash-success');
+    errEl.classList.add('hidden');
+    sucEl.classList.add('hidden');
+
+    const name = document.getElementById('name').value.trim();
+    const bankName = document.getElementById('bank-name').value.trim();
+    const accountNumber = document.getElementById('account-number').value.replace(/[^0-9]/g, '');
+    const ssn = document.getElementById('ssn').value.replace(/[^0-9]/g, '');
+    const newPhone = document.getElementById('new-phone').value.replace(/[^0-9]/g, '');
+    const c1 = document.getElementById('consent1').checked;
+    const c2 = document.getElementById('consent2').checked;
+    const c3 = document.getElementById('consent3').checked;
+
+    if (!name) { errEl.textContent = '이름을 입력해주세요.'; errEl.classList.remove('hidden'); return; }
+    if (!bankName) { errEl.textContent = '은행명을 입력해주세요.'; errEl.classList.remove('hidden'); return; }
+    if (!accountNumber) { errEl.textContent = '계좌번호를 입력해주세요.'; errEl.classList.remove('hidden'); return; }
+    if (ssn.length !== 13) { errEl.textContent = '주민등록번호 13자리를 정확히 입력해주세요.'; errEl.classList.remove('hidden'); return; }
+    if (!c1 || !c2 || !c3) { errEl.textContent = '모든 동의 항목에 체크해주세요.'; errEl.classList.remove('hidden'); return; }
+
+    const btn = document.getElementById('cash-submit-btn');
+    btn.innerHTML = '<span class="spinner"></span>신청 중...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/api/submit/cash', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: _phone, birthdate: _birth,
+          new_phone: newPhone || null,
+          name, bank_name: bankName, account_number: accountNumber, ssn,
+          consent_personal: true, consent_unique_id: true, consent_third_party: true
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) { errEl.textContent = data.error; errEl.classList.remove('hidden'); return; }
+
+      sucEl.innerHTML = '✅ ' + data.message;
+      sucEl.classList.remove('hidden');
+      btn.classList.add('hidden');
+      document.querySelectorAll('#step3-cash .btn-ghost').forEach(b => b.classList.add('hidden'));
+    } catch (e) {
+      errEl.textContent = '서버 연결에 실패했습니다.';
+      errEl.classList.remove('hidden');
+    } finally {
+      btn.innerHTML = '현금수령 신청 완료';
+      btn.disabled = false;
+    }
+  }
+
+  async function submitCapital() {
+    const errEl = document.getElementById('capital-error');
+    const sucEl = document.getElementById('capital-success');
+    errEl.classList.add('hidden');
+    sucEl.classList.add('hidden');
+
+    const newPhone = document.getElementById('new-phone-capital').value.replace(/[^0-9]/g, '');
+
+    const btn = document.getElementById('capital-submit-btn');
+    btn.innerHTML = '<span class="spinner"></span>신청 중...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/api/submit/capital', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: _phone, birthdate: _birth, new_phone: newPhone || null })
+      });
+      const data = await res.json();
+      if (!res.ok) { errEl.textContent = data.error; errEl.classList.remove('hidden'); return; }
+
+      sucEl.innerHTML = '✅ ' + data.message;
+      sucEl.classList.remove('hidden');
+      btn.classList.add('hidden');
+      document.querySelectorAll('#step3-capital .btn-ghost').forEach(b => b.classList.add('hidden'));
+    } catch (e) {
+      errEl.textContent = '서버 연결에 실패했습니다.';
+      errEl.classList.remove('hidden');
+    } finally {
+      btn.innerHTML = '출자금 반영 신청 완료';
+      btn.disabled = false;
+    }
+  }
+
+  // 주민번호 자동 하이픈
+  document.getElementById('ssn').addEventListener('input', function(e) {
+    let v = e.target.value.replace(/[^0-9]/g, '');
+    if (v.length > 6) v = v.slice(0, 6) + '-' + v.slice(6);
+    e.target.value = v.slice(0, 14);
+  });
+
+  // 엔터키로 조회
+  ['phone-input', 'birth-input'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+      if (e.key === 'Enter') lookupDividend();
+    });
+  });
+</script>
+</body>
+</html>

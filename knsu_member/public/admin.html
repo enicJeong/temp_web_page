@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>관리자 — 배당금 신청 현황</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Apple SD Gothic Neo', '맑은 고딕', sans-serif; background: #f0f2f7; color: #222; }
+
+  .header { background: #1a237e; color: white; padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .header-left h1 { font-size: 1rem; font-weight: 700; }
+  .header-left .sub { font-size: 0.78rem; opacity: 0.75; margin-top: 2px; }
+  .header-right { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .container { padding: 18px; max-width: 1500px; margin: 0 auto; }
+
+  /* 통계 */
+  .stats { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+  .stat { background: white; border-radius: 10px; padding: 13px 16px; flex: 1; min-width: 120px; box-shadow: 0 1px 5px rgba(0,0,0,.07); }
+  .stat .val { font-size: 1.45rem; font-weight: 800; color: #1a237e; }
+  .stat .lbl { font-size: 0.75rem; color: #888; margin-top: 2px; }
+  .stat.cash .val { color: #1b6b3a; }
+  .stat.capital .val { color: #1a3c6e; }
+  .stat.pending .val { color: #856404; }
+
+  /* 탭 */
+  .tabs { display: flex; gap: 0; border-bottom: 2px solid #dde2ef; margin-bottom: 14px; }
+  .tab { padding: 9px 18px; border: none; background: none; font-size: 0.88rem; cursor: pointer; color: #888; border-bottom: 2px solid transparent; margin-bottom: -2px; font-weight: 500; }
+  .tab.active { color: #1a237e; font-weight: 700; border-bottom-color: #1a237e; }
+
+  /* 툴바 */
+  .toolbar { background: white; border-radius: 10px; padding: 13px 16px; margin-bottom: 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; box-shadow: 0 1px 5px rgba(0,0,0,.07); }
+  .toolbar input { padding: 8px 12px; border: 1.5px solid #d5dbe8; border-radius: 7px; font-size: 0.88rem; min-width: 200px; }
+  .toolbar input:focus { outline: none; border-color: #1a237e; }
+
+  /* 버튼 */
+  .btn { padding: 8px 16px; border: none; border-radius: 7px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .btn-search { background: #1a237e; color: white; }
+  .btn-reset { background: #eef0f8; color: #1a237e; }
+  .btn-excel { background: #1b6b3a; color: white; }
+  .btn-upload { background: #e65100; color: white; }
+  .btn:hover { opacity: .88; }
+
+  /* 테이블 */
+  .table-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 5px rgba(0,0,0,.07); margin-bottom: 12px; }
+  .table-card-title { padding: 12px 16px; font-size: 0.9rem; font-weight: 700; background: #f5f6fc; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.79rem; white-space: nowrap; }
+  thead { background: #eef0f8; }
+  th { padding: 9px 10px; text-align: left; font-weight: 700; color: #333; border-bottom: 2px solid #dde2ef; }
+  td { padding: 8px 10px; border-bottom: 1px solid #f2f3f8; }
+  tr:hover td { background: #f8f9fd; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.73rem; font-weight: 700; }
+  .badge-cash { background: #e8f5ee; color: #1b6b3a; }
+  .badge-capital { background: #e8edf8; color: #1a237e; }
+  .badge-none { background: #f5f5f5; color: #999; }
+  .badge-found { background: #e8f5ee; color: #1b6b3a; }
+  .badge-not_found { background: #fff0f0; color: #c0392b; }
+  .badge-rate_limited { background: #fff3cd; color: #856404; }
+
+  .masked { color: #bbb; font-family: monospace; letter-spacing: 1px; }
+  .consent-ok { color: #1b6b3a; font-size: .75rem; }
+  .consent-time { color: #999; font-size: .7rem; display: block; }
+
+  /* 페이지네이션 */
+  .pagination { display: flex; justify-content: center; gap: 5px; padding: 14px; flex-wrap: wrap; }
+  .page-btn { padding: 6px 11px; border: 1.5px solid #d5dbe8; background: white; border-radius: 6px; cursor: pointer; font-size: 0.82rem; transition: all .15s; }
+  .page-btn:hover:not(:disabled) { background: #eef0f8; }
+  .page-btn.active { background: #1a237e; color: white; border-color: #1a237e; }
+  .page-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* 업로드 모달 */
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .modal { background: white; border-radius: 14px; padding: 26px; width: 100%; max-width: 560px; }
+  .modal h3 { font-size: 1rem; margin-bottom: 12px; }
+  .modal textarea { width: 100%; height: 110px; font-size: 0.8rem; font-family: monospace; border: 1.5px solid #d5dbe8; border-radius: 8px; padding: 10px; margin-bottom: 12px; resize: vertical; }
+  .modal-btns { display: flex; gap: 8px; }
+  .code-sample { background: #f5f6fc; border-radius: 7px; padding: 10px 12px; font-size: 0.75rem; font-family: monospace; color: #444; margin-bottom: 12px; line-height: 1.6; }
+
+  .alert { padding: 10px 13px; border-radius: 7px; font-size: 0.83rem; margin-top: 10px; }
+  .alert-error { background: #fff0f0; color: #c0392b; }
+  .alert-success { background: #edfaf1; color: #1b6b3a; }
+
+  .hidden { display: none !important; }
+  .spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,.4); border-top-color: white; border-radius: 50%; animation: spin .65s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .count-tag { font-size: 0.78rem; color: #888; font-weight: 400; }
+  .suspicious { background: #fff8e1 !important; }
+  .suspicious td { color: #856404; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>🔐 관리자 — 배당금 신청 현황</h1>
+    <div class="sub" id="admin-email">인증 확인 중...</div>
+  </div>
+  <div class="header-right">
+    <button class="btn btn-upload" onclick="showUploadModal()">📤 데이터 업로드</button>
+    <button class="btn btn-excel" onclick="downloadExcel()">📊 엑셀 다운로드</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 통계 -->
+  <div class="stats">
+    <div class="stat"><div class="val" id="s-total">-</div><div class="lbl">전체 회원</div></div>
+    <div class="stat cash"><div class="val" id="s-cash">-</div><div class="lbl">현금수령 신청</div></div>
+    <div class="stat capital"><div class="val" id="s-capital">-</div><div class="lbl">출자금 반영</div></div>
+    <div class="stat pending"><div class="val" id="s-pending">-</div><div class="lbl">미신청</div></div>
+  </div>
+
+  <!-- 탭 -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('list')">📋 신청 목록</button>
+    <button class="tab" onclick="switchTab('lookup-logs')">🔍 조회 로그</button>
+    <button class="tab" onclick="switchTab('download-logs')">📥 다운로드 로그</button>
+  </div>
+
+  <!-- 신청 목록 탭 -->
+  <div id="tab-list">
+    <div class="toolbar">
+      <input type="text" id="search-input" placeholder="이름 또는 전화번호 검색..." onkeydown="if(event.key==='Enter')doSearch()">
+      <button class="btn btn-search" onclick="doSearch()">검색</button>
+      <button class="btn btn-reset" onclick="resetSearch()">초기화</button>
+      <span id="result-count" class="count-tag"></span>
+    </div>
+
+    <div class="table-card">
+      <div class="table-card-title">
+        배당금 신청 현황
+        <span style="font-size:.75rem;color:#999;font-weight:400;">주민번호 ✱ 마스킹 표시</span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>전화번호</th><th>변경 번호</th>
+              <th>출자배당</th><th>사용실적배당</th><th>배당총액</th>
+              <th>소득세</th><th>지방세</th><th>실수령액</th>
+              <th>수령방법</th><th>이름</th><th>은행</th><th>계좌번호</th><th>주민번호</th>
+              <th>개인정보동의</th><th>고유식별동의</th><th>제3자동의</th>
+              <th>출자반영일시</th><th>신청일시</th>
+            </tr>
+          </thead>
+          <tbody id="list-body">
+            <tr><td colspan="19" style="text-align:center;padding:30px;color:#aaa;">불러오는 중...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+
+  <!-- 조회 로그 탭 -->
+  <div id="tab-lookup-logs" class="hidden">
+    <div class="toolbar">
+      <input type="text" id="log-search" placeholder="전화번호 또는 IP 검색..." onkeydown="if(event.key==='Enter')loadLookupLogs()">
+      <button class="btn btn-search" onclick="loadLookupLogs()">검색</button>
+      <button class="btn btn-reset" onclick="()=>{document.getElementById('log-search').value='';loadLookupLogs();}">초기화</button>
+      <span style="font-size:.78rem;color:#856404;">⚠️ 노란 행 = 같은 IP로 5회 이상 조회</span>
+    </div>
+
+    <div class="table-card">
+      <div class="table-card-title">조회 로그 (최근 200건)</div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>전화번호</th><th>IP</th><th>국가</th>
+              <th>결과</th><th>IP 누적 횟수</th><th>번호 누적 횟수</th>
+              <th>브라우저</th><th>조회 일시</th>
+            </tr>
+          </thead>
+          <tbody id="log-body">
+            <tr><td colspan="9" style="text-align:center;padding:24px;color:#aaa;">불러오는 중...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 다운로드 로그 탭 -->
+  <div id="tab-download-logs" class="hidden">
+    <div class="table-card">
+      <div class="table-card-title">엑셀 다운로드 로그</div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>#</th><th>관리자 이메일</th><th>다운로드 일시</th><th>행 수</th></tr>
+          </thead>
+          <tbody id="dl-log-body">
+            <tr><td colspan="4" style="text-align:center;padding:24px;color:#aaa;">불러오는 중...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 업로드 모달 -->
+<div id="upload-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <h3>📤 회원 배당금 데이터 업로드</h3>
+    <div class="code-sample">
+[{"phone":"01012345678","birthdate":"19901215","capital_dividend":5560,"usage_dividend":26400,"total_dividend":31960,"dividend_tax":4094,"local_tax":409,"actual_amount":27457}]
+    </div>
+    <textarea id="upload-json" placeholder="JSON 배열을 붙여넣으세요..."></textarea>
+    <div class="modal-btns">
+      <button class="btn btn-upload" onclick="doUpload()" style="flex:1;">업로드</button>
+      <button class="btn btn-reset" onclick="hideUploadModal()" style="flex:1;">취소</button>
+    </div>
+    <div id="upload-alert" class="hidden"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+let currentPage = 1;
+let currentSearch = '';
+
+// ── 초기화 ──────────────────────────────────────────────
+(async () => {
+  const res = await fetch('/api/admin/check');
+  const data = await res.json();
+  if (!data.authorized) {
+    document.body.innerHTML = '<div style="text-align:center;padding:80px;font-size:1.1rem;color:#c0392b;">⛔ 접근 권한이 없습니다.<br><br><a href="/">홈으로</a></div>';
+    return;
+  }
+  document.getElementById('admin-email').textContent = '로그인: ' + data.email;
+  loadStats();
+  loadList(1, '');
+})();
+
+// ── 탭 전환 ──────────────────────────────────────────────
+function switchTab(tab) {
+  ['list','lookup-logs','download-logs'].forEach(t => {
+    document.getElementById('tab-' + t)?.classList.add('hidden');
+    document.getElementById('tab-' + t + '')?.classList.add('hidden');
+  });
+  document.querySelectorAll('.tab').forEach((b, i) => {
+    b.classList.toggle('active',
+      (i===0 && tab==='list') ||
+      (i===1 && tab==='lookup-logs') ||
+      (i===2 && tab==='download-logs')
+    );
+  });
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+  if (tab === 'lookup-logs') loadLookupLogs();
+  if (tab === 'download-logs') loadDownloadLogs();
+}
+
+// ── 통계 ─────────────────────────────────────────────────
+async function loadStats() {
+  try {
+    const res = await fetch('/api/admin/stats');
+    const d = await res.json();
+    document.getElementById('s-total').textContent = d.total ?? '-';
+    document.getElementById('s-cash').textContent = d.cash ?? '-';
+    document.getElementById('s-capital').textContent = d.capital ?? '-';
+    document.getElementById('s-pending').textContent = d.pending ?? '-';
+  } catch {}
+}
+
+// ── 목록 ─────────────────────────────────────────────────
+function fmt(n) {
+  if (n === null || n === undefined) return '-';
+  return Number(n).toLocaleString('ko-KR');
+}
+
+function methodBadge(m) {
+  if (m === 'cash') return '<span class="badge badge-cash">현금수령</span>';
+  if (m === 'capital') return '<span class="badge badge-capital">출자반영</span>';
+  return '<span class="badge badge-none">미신청</span>';
+}
+
+function consentCell(v, t) {
+  if (!v) return '-';
+  return `<span class="consent-ok">✓ 동의<span class="consent-time">${(t||'').slice(0,16)}</span></span>`;
+}
+
+async function loadList(page, search) {
+  currentPage = page;
+  currentSearch = search;
+  const params = new URLSearchParams({ page, search });
+  try {
+    const res = await fetch('/api/admin/list?' + params);
+    const data = await res.json();
+    if (!res.ok) { alert(data.error); return; }
+
+    document.getElementById('result-count').textContent = `총 ${data.total}명`;
+    const offset = (page - 1) * 50;
+
+    document.getElementById('list-body').innerHTML = (data.rows || []).length === 0
+      ? '<tr><td colspan="19" style="text-align:center;padding:28px;color:#aaa;">검색 결과가 없습니다.</td></tr>'
+      : (data.rows || []).map((r, i) => `
+        <tr>
+          <td>${offset + i + 1}</td>
+          <td>${r.phone}</td>
+          <td>${r.new_phone || '-'}</td>
+          <td style="text-align:right">${fmt(r.capital_dividend)}</td>
+          <td style="text-align:right">${fmt(r.usage_dividend)}</td>
+          <td style="text-align:right;font-weight:600">${fmt(r.total_dividend)}</td>
+          <td style="text-align:right">${fmt(r.dividend_tax)}</td>
+          <td style="text-align:right">${fmt(r.local_tax)}</td>
+          <td style="text-align:right;font-weight:700;color:#1a237e">${fmt(r.actual_amount)}</td>
+          <td>${methodBadge(r.payment_method)}</td>
+          <td>${r.name || '-'}</td>
+          <td>${r.bank_name || '-'}</td>
+          <td>${r.account_number || '-'}</td>
+          <td class="masked">${r.ssn_masked || '-'}</td>
+          <td>${consentCell(r.consent_personal, r.consent_personal_at)}</td>
+          <td>${consentCell(r.consent_unique_id, r.consent_unique_id_at)}</td>
+          <td>${consentCell(r.consent_third_party, r.consent_third_party_at)}</td>
+          <td>${r.capital_reflected_at || '-'}</td>
+          <td>${r.submitted_at || '-'}</td>
+        </tr>`).join('');
+
+    renderPagination(data.totalPages, page);
+  } catch (e) {
+    document.getElementById('list-body').innerHTML = '<tr><td colspan="19" style="text-align:center;padding:28px;color:red;">로드 실패</td></tr>';
+  }
+}
+
+function doSearch() {
+  loadList(1, document.getElementById('search-input').value.trim());
+}
+function resetSearch() {
+  document.getElementById('search-input').value = '';
+  loadList(1, '');
+}
+
+function renderPagination(total, current) {
+  const el = document.getElementById('pagination');
+  if (total <= 1) { el.innerHTML = ''; return; }
+  let html = `<button class="page-btn" onclick="loadList(${current-1},'${currentSearch}')" ${current<=1?'disabled':''}>‹</button>`;
+  const s = Math.max(1, current-3), e = Math.min(total, current+3);
+  if (s > 1) html += `<button class="page-btn" onclick="loadList(1,'${currentSearch}')">1</button>${s>2?'<span style="padding:0 4px">…</span>':''}`;
+  for (let p = s; p <= e; p++)
+    html += `<button class="page-btn ${p===current?'active':''}" onclick="loadList(${p},'${currentSearch}')">${p}</button>`;
+  if (e < total) html += `${e<total-1?'<span style="padding:0 4px">…</span>':''}<button class="page-btn" onclick="loadList(${total},'${currentSearch}')">${total}</button>`;
+  html += `<button class="page-btn" onclick="loadList(${current+1},'${currentSearch}')" ${current>=total?'disabled':''}>›</button>`;
+  el.innerHTML = html;
+}
+
+// ── 조회 로그 ─────────────────────────────────────────────
+async function loadLookupLogs() {
+  const search = document.getElementById('log-search').value.trim();
+  try {
+    const res = await fetch('/api/admin/lookup-logs?search=' + encodeURIComponent(search));
+    const data = await res.json();
+    const logs = data.logs || [];
+    document.getElementById('log-body').innerHTML = logs.length === 0
+      ? '<tr><td colspan="9" style="text-align:center;padding:24px;color:#aaa;">로그가 없습니다.</td></tr>'
+      : logs.map((l, i) => {
+          const suspicious = (l.ip_total_count || 0) >= 5;
+          const resultBadge = `<span class="badge badge-${l.result}">${l.result === 'found' ? '조회성공' : l.result === 'not_found' ? '불일치' : '차단'}</span>`;
+          const ua = (l.user_agent || '').slice(0, 40);
+          return `<tr ${suspicious ? 'class="suspicious"' : ''}>
+            <td>${i+1}</td>
+            <td>${l.phone}</td>
+            <td><code>${l.ip}</code></td>
+            <td>${l.country || '-'}</td>
+            <td>${resultBadge}</td>
+            <td style="text-align:center;font-weight:700;${(l.ip_total_count||0)>=5?'color:#e65100':''}">${l.ip_total_count || 1}</td>
+            <td style="text-align:center">${l.phone_total_count || 1}</td>
+            <td style="font-size:.72rem;color:#999;">${ua}${ua.length===40?'…':''}</td>
+            <td>${l.looked_at}</td>
+          </tr>`;
+        }).join('');
+  } catch {}
+}
+
+// ── 다운로드 로그 ─────────────────────────────────────────
+async function loadDownloadLogs() {
+  try {
+    const res = await fetch('/api/admin/download-logs');
+    const data = await res.json();
+    const logs = data.logs || [];
+    document.getElementById('dl-log-body').innerHTML = logs.length === 0
+      ? '<tr><td colspan="4" style="text-align:center;padding:24px;color:#aaa;">다운로드 기록이 없습니다.</td></tr>'
+      : logs.map((l, i) => `<tr><td>${i+1}</td><td>${l.admin_email}</td><td>${l.downloaded_at}</td><td>${l.row_count}행</td></tr>`).join('');
+  } catch {}
+}
+
+// ── 엑셀 다운로드 ─────────────────────────────────────────
+async function downloadExcel() {
+  if (!confirm('전체 데이터를 엑셀로 다운로드합니다.\n주민번호 복호화 포함, 다운로드 로그가 기록됩니다.\n\n계속하시겠습니까?')) return;
+
+  const btn = document.querySelector('.btn-excel');
+  btn.innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/admin/download');
+    const data = await res.json();
+    if (!res.ok) { alert(data.error); return; }
+
+    const rows = data.rows.map((r, i) => ({
+      '번호': i+1, '전화번호': r.phone, '변경전화번호': r.new_phone||'',
+      '출자배당': r.capital_dividend, '사용실적배당': r.usage_dividend,
+      '배당총액': r.total_dividend, '배당소득세': r.dividend_tax,
+      '지방소득세': r.local_tax, '실수령액': r.actual_amount,
+      '수령방법': r.payment_method==='cash'?'현금수령':r.payment_method==='capital'?'출자반영':'미신청',
+      '이름': r.name||'', '은행': r.bank_name||'', '계좌번호': r.account_number||'',
+      '주민번호': r.ssn||'',
+      '개인정보동의': r.consent_personal?'동의':'', '개인정보동의일시': r.consent_personal_at||'',
+      '고유식별동의': r.consent_unique_id?'동의':'', '고유식별동의일시': r.consent_unique_id_at||'',
+      '제3자동의': r.consent_third_party?'동의':'', '제3자동의일시': r.consent_third_party_at||'',
+      '출자반영일시': r.capital_reflected_at||'', '신청일시': r.submitted_at||'',
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, '배당금신청현황');
+    XLSX.writeFile(wb, `배당금신청현황_${new Date().toISOString().slice(0,10)}.xlsx`);
+    loadDownloadLogs();
+  } catch (e) {
+    alert('다운로드 실패: ' + e.message);
+  } finally {
+    btn.innerHTML = '📊 엑셀 다운로드';
+    btn.disabled = false;
+  }
+}
+
+// ── 업로드 모달 ───────────────────────────────────────────
+function showUploadModal() { document.getElementById('upload-modal').classList.remove('hidden'); }
+function hideUploadModal() { document.getElementById('upload-modal').classList.add('hidden'); }
+
+async function doUpload() {
+  const alertEl = document.getElementById('upload-alert');
+  alertEl.className = 'hidden';
+  let members;
+  try {
+    members = JSON.parse(document.getElementById('upload-json').value);
+    if (!Array.isArray(members)) throw new Error('배열 형식이어야 합니다.');
+  } catch (e) {
+    alertEl.className = 'alert alert-error';
+    alertEl.textContent = 'JSON 파싱 오류: ' + e.message;
+    return;
+  }
+  try {
+    const res = await fetch('/api/admin/upload-members', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ members })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    alertEl.className = 'alert alert-success';
+    alertEl.textContent = `✅ 신규 ${data.inserted}명 추가, ${data.updated}명 업데이트 완료`;
+    loadStats();
+    loadList(1, '');
+  } catch (e) {
+    alertEl.className = 'alert alert-error';
+    alertEl.textContent = '업로드 실패: ' + e.message;
+  }
+}
+</script>
+</body>
+</html>
