@@ -7,7 +7,7 @@ export async function onRequest(context) {
     return new Response(null, {
       status: 204,
       headers: {
-        'Access-Control-Allow-Origin': 'https://admin.uneedcoop.com',
+        'Access-Control-Allow-Origin': 'https://admin.knsucoop.com',
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
@@ -56,7 +56,7 @@ export async function onRequest(context) {
         status: 401,
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': 'https://admin.uneedcoop.com',
+          'Access-Control-Allow-Origin': 'https://admin.knsucoop.com',
           'Access-Control-Allow-Credentials': 'true',
         },
       }
@@ -75,7 +75,7 @@ export async function onRequest(context) {
         status: 403,
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': 'https://admin.uneedcoop.com',
+          'Access-Control-Allow-Origin': 'https://admin.knsucoop.com',
           'Access-Control-Allow-Credentials': 'true',
         },
       }
