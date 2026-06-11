@@ -1,8 +1,0 @@
-name = "uneedcoop-member"
-compatibility_date = "2024-09-23"
-pages_build_output_dir = "public"
-
-[[d1_databases]]
-binding = "DB"
-database_name = "uneedcoop-member-db"
-database_id = "YOUR_D1_DATABASE_ID"   # wrangler d1 create 후 여기에 입력
