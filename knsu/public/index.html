@@ -13,7 +13,7 @@
       color: #1a1a2e;
       min-height: 100vh;
       padding: 24px 16px 60px;
-      font-size: 120%;
+      font-size: clamp(15px, 4vw, 18px);
     }
 
     .container {
@@ -472,10 +472,17 @@ const state = {
 };
 
 // ─── 섹션 전환 ───────────────────────────────────────────────────
-function showSection(id) {
+function showSection(id, scrollToId) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (scrollToId) {
+    setTimeout(() => {
+      const el = document.getElementById(scrollToId);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  } else {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }
 
 function goBack() {
@@ -584,9 +591,9 @@ function selectMethod(method) {
     if (method === 'cash') {
       // 이름 자동 채우기
       document.getElementById('cash-name').value = state.member.name;
-      showSection('section-cash');
+      showSection('section-cash', 'section-cash');
     } else {
-      showSection('section-capital');
+      showSection('section-capital', 'section-capital');
     }
   }, 200);
 }
