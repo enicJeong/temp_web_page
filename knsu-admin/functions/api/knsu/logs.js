@@ -12,7 +12,7 @@ export async function onRequestGet(context) {
   if (type === 'download') {
     const { results } = await db
       .prepare(
-        `SELECT id, email, row_count, downloaded_at
+        `SELECT id, email, ip, row_count, downloaded_at
          FROM download_logs
          ORDER BY downloaded_at DESC
          LIMIT 200`

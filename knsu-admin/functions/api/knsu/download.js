@@ -48,9 +48,11 @@ export async function onRequestGet(context) {
 
     // 다운로드 로그 기록
     try {
+      const ip = context.request.headers.get('CF-Connecting-IP') || 'unknown';
+      const kstNow = new Date(Date.now() + 9*3600000).toISOString().replace('T',' ').substring(0,19);
       await db
-        .prepare(`INSERT INTO download_logs (email, row_count) VALUES (?, ?)`)
-        .bind(adminEmail, rows.length)
+        .prepare(`INSERT INTO download_logs (email, ip, row_count, downloaded_at) VALUES (?, ?, ?, ?)`)
+        .bind(adminEmail, ip, rows.length, kstNow)
         .run();
     } catch (e) {
       console.error('download log insert failed:', e);

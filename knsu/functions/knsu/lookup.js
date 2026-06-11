@@ -20,6 +20,8 @@ export async function onRequestPost(context) {
     return jsonResponse({ ok: false, error: '전화번호와 이름을 모두 입력해주세요.' }, 400);
   }
 
+  const kstNow = () => new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().replace('T', ' ').substring(0, 19);
+
   // 회원 조회
   const member = await db
     .prepare(`SELECT * FROM members WHERE phone = ?`)
@@ -30,16 +32,16 @@ export async function onRequestPost(context) {
   if (!member || member.name !== name) {
     // 로그 비동기 처리 (응답 속도에 영향 없음)
     context.waitUntil(
-      db.prepare(`INSERT INTO lookup_logs (ip, phone, result) VALUES (?, ?, 'mismatch')`)
-        .bind(ip, phone).run()
+      db.prepare(`INSERT INTO lookup_logs (ip, phone, result, logged_at) VALUES (?, ?, 'mismatch', ?)`)
+        .bind(ip, phone, kstNow()).run()
     );
     return jsonResponse({ ok: false, error: '일치하는 정보가 없습니다.' }, 404);
   }
 
   // 성공 로그 비동기 처리
   context.waitUntil(
-    db.prepare(`INSERT INTO lookup_logs (ip, phone, result) VALUES (?, ?, 'success')`)
-      .bind(ip, phone).run()
+    db.prepare(`INSERT INTO lookup_logs (ip, phone, result, logged_at) VALUES (?, ?, 'success', ?)`)
+      .bind(ip, phone, kstNow()).run()
   );
 
   // 기존 신청 여부 확인

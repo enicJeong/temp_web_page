@@ -404,7 +404,7 @@
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th>이메일</th><th>다운로드 행 수</th><th>일시</th></tr>
+          <tr><th>이메일</th><th>IP</th><th>다운로드 행 수</th><th>일시</th></tr>
         </thead>
         <tbody id="download-log-tbody">
           <tr class="loading-row"><td colspan="3">로딩 중...</td></tr>
@@ -462,19 +462,8 @@ const DOWNLOAD_PAGE_SIZE = 20;
 // ─── 한국시간 포맷 ───────────────────────────────────────────────
 function fmtKST(str) {
   if (!str || str === '—') return '—';
-  try {
-    // DB값이 'YYYY-MM-DD HH:MM:SS' (localtime) 또는 ISO 형식
-    let d;
-    if (str.includes('T')) {
-      d = new Date(str);
-    } else {
-      // SQLite localtime → UTC+9 이미 반영된 값으로 처리
-      d = new Date(str.replace(' ', 'T') + '+09:00');
-    }
-    const p = n => String(n).padStart(2, '0');
-    const yy = String(d.getFullYear()).slice(2);
-    return `${yy}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
-  } catch { return str; }
+  // DB에 KST로 저장되어 있으므로 그대로 반환
+  return String(str).replace('T', ' ').substring(0, 19);
 }
 
 // ─── 초기 로드 ───────────────────────────────────────────────────
@@ -845,6 +834,7 @@ function renderDownloadLogPage(page) {
     : slice.map(r => `
         <tr>
           <td>${esc(r.email)}</td>
+          <td>${esc(r.ip) || '—'}</td>
           <td>${r.row_count.toLocaleString()}행</td>
           <td>${fmtKST(r.downloaded_at)}</td>
         </tr>`).join('');
@@ -872,9 +862,9 @@ function downloadLogTxt(type) {
     text = 'IP별 조회 현황\n' + toCSV(ipRows) + '\n\n최근 조회 기록\n' + toCSV(recentRows);
   } else {
     filename = `KNSU_다운로드로그_${now}.csv`;
-    const dlRows = [['이메일','행수','일시']];
+    const dlRows = [['이메일','IP','행수','일시']];
     downloadLogsAll.forEach(r => {
-      dlRows.push([r.email, r.row_count, fmtKST(r.downloaded_at)]);
+      dlRows.push([r.email, r.ip || '', r.row_count, fmtKST(r.downloaded_at)]);
     });
     text = toCSV(dlRows);
   }
