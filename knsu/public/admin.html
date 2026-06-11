@@ -265,7 +265,7 @@
   <h1>KNSU 배당금 관리자</h1>
   <div style="display:flex;align-items:center;gap:12px;">
     <div class="admin-email" id="admin-email-display">—</div>
-    <a href="https://wild-silence-4ca0.cloudflareaccess.com/cdn-cgi/access/logout?returnTo=https://member.uneedcoop.com/knsu" class="logout-btn">로그아웃</a>
+    <a href="/cdn-cgi/access/logout" class="logout-btn" onclick="handleLogout(event)">로그아웃</a>
   </div>
 </div>
 
@@ -432,6 +432,14 @@ const LOOKUP_PAGE_SIZE = 20;
 let downloadLogsAll = [];
 let downloadLogPage = 1;
 const DOWNLOAD_PAGE_SIZE = 20;
+
+// ─── 로그아웃 ────────────────────────────────────────────────────
+function handleLogout(e) {
+  e.preventDefault();
+  // CF_Authorization 쿠키 삭제
+  document.cookie = 'CF_Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  window.location.href = '/cdn-cgi/access/logout';
+}
 
 // ─── 한국시간 포맷 ───────────────────────────────────────────────
 function fmtKST(str) {
