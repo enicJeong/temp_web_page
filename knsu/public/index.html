@@ -83,6 +83,11 @@
       </div>
     </div>
 
+    <!-- PNG 저장 버튼 (결과 화면) -->
+    <div id="result-png-btn" style="display:none; margin-bottom:12px;">
+      <button class="btn btn-secondary" onclick="printReceipt()">📥 현재 내역 PNG 저장</button>
+    </div>
+
     <!-- 재신청 경고 -->
     <div class="reapply-warning" id="reapply-warning">
       <strong>⚠️ 이미 신청 내역이 있습니다</strong>
@@ -373,9 +378,11 @@ function renderResult() {
       `신청 방법: ${methodLabel} / 신청일: ${fmtKST(state.existing.applied_at)}`;
     warningEl.classList.add('show');
     methodCard.style.display = 'none';
+    document.getElementById('result-png-btn').style.display = 'block';
   } else {
     warningEl.classList.remove('show');
     methodCard.style.display = '';
+    document.getElementById('result-png-btn').style.display = 'none';
   }
 
   // 배당금 내역 박스 열기
@@ -646,7 +653,7 @@ async function submitCapital() {
 // ─── STEP 4: 완료 ───────────────────────────────────────────────
 async function printReceipt() {
   const m = state.member;
-  const method = state._lastMethod;
+  const method = state._lastMethod ?? state.existing?.method;
   const now = new Date(Date.now() + 9*3600000).toISOString().replace('T',' ').substring(0,19);
 
   document.getElementById('r-name').textContent = m.name;
@@ -666,7 +673,7 @@ async function printReceipt() {
   el.style.top = '0';
 
   try {
-    const btn = document.querySelector('[onclick="printReceipt()"]');
+    const btn = event?.target || document.querySelector('[onclick="printReceipt()"]');
     btn.disabled = true;
     btn.textContent = '생성 중...';
 
