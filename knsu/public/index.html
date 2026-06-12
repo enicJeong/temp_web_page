@@ -85,7 +85,7 @@
 
     <!-- PNG 저장 버튼 (결과 화면) -->
     <div id="result-png-btn" style="display:none; margin-bottom:12px;">
-      <button class="btn btn-secondary" onclick="printReceipt()">📥 현재 내역 PNG 저장</button>
+      <button class="btn" style="background:#006B54;color:#fff;margin-top:0;" onclick="printReceipt()">📥 신청내역 PNG 저장</button>
     </div>
 
     <!-- 재신청 경고 -->
@@ -214,7 +214,7 @@
         <div class="success-title" id="done-title">신청이 완료되었습니다</div>
         <div class="success-desc" id="done-desc"></div>
       </div>
-      <button class="btn btn-secondary" style="margin-top:20px;" onclick="printReceipt()">📥 내역 PNG 저장</button>
+      <button class="btn" style="background:#006B54;color:#fff;margin-top:20px;" onclick="printReceipt()">📥 신청내역 PNG 저장</button>
     </div>
   </div>
 
@@ -222,7 +222,7 @@
   <div id="print-receipt" style="display:none;">
     <div class="receipt-wrap">
       <div class="receipt-header">
-        <img src="/logo.svg" alt="한국체육대학교 소비자생활협동조합" class="receipt-logo" onerror="this.style.display='none'" />
+        <img id="receipt-logo-img" src="" alt="한국체육대학교 소비자생활협동조합" class="receipt-logo" />
         <div class="receipt-coop">한국체육대학교 소비자생활협동조합</div>
         <div class="receipt-title">2025년 사업 결산 배당금 지급 내역</div>
       </div>
@@ -654,15 +654,29 @@ async function submitCapital() {
 async function printReceipt() {
   const m = state.member;
   const method = state._lastMethod ?? state.existing?.method;
+
+  // 로고 base64 변환 (html2canvas 크로스오리진 이슈 방지)
+  try {
+    const logoRes = await fetch('/logo.svg');
+    const logoBlob = await logoRes.blob();
+    const logoB64 = await new Promise(res => {
+      const reader = new FileReader();
+      reader.onload = () => res(reader.result);
+      reader.readAsDataURL(logoBlob);
+    });
+    document.getElementById('receipt-logo-img').src = logoB64;
+  } catch {
+    document.getElementById('receipt-logo-img').style.display = 'none';
+  }
   const now = new Date(Date.now() + 9*3600000).toISOString().replace('T',' ').substring(0,19);
 
   document.getElementById('r-name').textContent = m.name;
   document.getElementById('r-phone').textContent = state.phone.replace(/(\d{3})(\d{3,4})(\d{4})/, '$1-$2-$3');
-  document.getElementById('r-capital').textContent = fmt(m.div_capital) + '원';
-  document.getElementById('r-usage').textContent = fmt(m.div_usage) + '원';
-  document.getElementById('r-tax-income').textContent = m.tax_income > 0 ? fmt(m.tax_income) + '원' : '해당없음';
-  document.getElementById('r-tax-local').textContent = m.tax_local > 0 ? fmt(m.tax_local) + '원' : '해당없음';
-  document.getElementById('r-net').textContent = fmt(m.div_net) + '원';
+  document.getElementById('r-capital').textContent = fmt(m.div_capital);
+  document.getElementById('r-usage').textContent = fmt(m.div_usage);
+  document.getElementById('r-tax-income').textContent = m.tax_income > 0 ? fmt(m.tax_income) : '해당없음';
+  document.getElementById('r-tax-local').textContent = m.tax_local > 0 ? fmt(m.tax_local) : '해당없음';
+  document.getElementById('r-net').textContent = fmt(m.div_net);
   document.getElementById('r-method').textContent = method === 'cash' ? '현금입금' : '출자처리';
   document.getElementById('r-date').textContent = now;
 
@@ -691,7 +705,7 @@ async function printReceipt() {
     link.click();
 
     btn.disabled = false;
-    btn.textContent = '📥 내역 PNG 저장';
+    btn.textContent = '📥 신청내역 PNG 저장';
   } catch (e) {
     alert('저장 중 오류가 발생했습니다.');
   } finally {
