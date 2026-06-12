@@ -522,3 +522,18 @@ body {
   padding-top: 10mm;
   border-top: 1px solid #ccc;
 }
+
+/* PNG 저장 버튼 애니메이션 */
+.btn-png {
+  background: #006B54;
+  color: #fff;
+  animation: png-pulse 3s ease-in-out infinite;
+}
+.btn-png:hover {
+  background: #005443;
+  animation: none;
+}
+@keyframes png-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .75; }
+}

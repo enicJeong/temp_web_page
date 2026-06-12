@@ -70,6 +70,7 @@
         <div class="card-title" id="result-member-name" style="margin-bottom:0;">홍길동 님의 배당금 내역</div>
         <span class="toggle-icon">▾</span>
       </div>
+      <div class="dividend-phone-row" style="margin-top:10px;"><span>조회 전화번호</span><span id="val-phone">—</span></div>
       <div class="dividend-card-body" id="dividend-body">
         <table class="dividend-table" style="margin-top:14px;">
           <tr><td>출자배당금</td><td id="val-div-capital">—</td></tr>
@@ -79,13 +80,12 @@
           <tr class="tax-row"><td>지방소득세</td><td id="val-tax-local">—</td></tr>
           <tr class="total-row"><td>실제수령액</td><td id="val-div-net">—</td></tr>
         </table>
-        <div class="dividend-phone-row"><span>조회 전화번호</span><span id="val-phone">—</span></div>
       </div>
     </div>
 
     <!-- PNG 저장 버튼 (결과 화면) -->
     <div id="result-png-btn" style="display:none; margin-bottom:12px;">
-      <button class="btn" style="background:#006B54;color:#fff;margin-top:0;" onclick="printReceipt()">📥 신청내역 PNG 저장</button>
+      <button class="btn btn-png" onclick="printReceipt()">📥 신청내역 PNG 저장</button>
     </div>
 
     <!-- 재신청 경고 -->
@@ -214,7 +214,7 @@
         <div class="success-title" id="done-title">신청이 완료되었습니다</div>
         <div class="success-desc" id="done-desc"></div>
       </div>
-      <button class="btn" style="background:#006B54;color:#fff;margin-top:20px;" onclick="printReceipt()">📥 신청내역 PNG 저장</button>
+      <button class="btn btn-png" style="margin-top:20px;" onclick="printReceipt()">📥 신청내역 PNG 저장</button>
     </div>
   </div>
 
@@ -655,9 +655,9 @@ async function printReceipt() {
   const m = state.member;
   const method = state._lastMethod ?? state.existing?.method;
 
-  // 로고 base64 변환 (html2canvas 크로스오리진 이슈 방지)
+  // 로고 PNG base64 변환 (SVG는 html2canvas 렌더링 불완전)
   try {
-    const logoRes = await fetch('/logo.svg');
+    const logoRes = await fetch('/logo.png');
     const logoBlob = await logoRes.blob();
     const logoB64 = await new Promise(res => {
       const reader = new FileReader();
@@ -665,6 +665,12 @@ async function printReceipt() {
       reader.readAsDataURL(logoBlob);
     });
     document.getElementById('receipt-logo-img').src = logoB64;
+    // 이미지 로드 완료 대기
+    await new Promise(res => {
+      const img = document.getElementById('receipt-logo-img');
+      if (img.complete) res();
+      else { img.onload = res; img.onerror = res; }
+    });
   } catch {
     document.getElementById('receipt-logo-img').style.display = 'none';
   }
@@ -699,13 +705,30 @@ async function printReceipt() {
       height: 1123,
     });
 
-    const link = document.createElement('a');
-    link.download = `배당금내역_${m.name}_${now.slice(0,10)}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+    const dataUrl = canvas.toDataURL('image/png');
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      // 모바일: 새 탭에서 이미지 열기 + 저장 안내
+      const win = window.open();
+      win.document.write(`
+        <html><body style="margin:0;background:#000;text-align:center;">
+          <p style="color:#fff;font-family:sans-serif;padding:12px;font-size:14px;">
+            이미지를 <strong>길게 누른 후</strong> "사진에 저장" 또는 "이미지 저장"을 선택하세요.
+          </p>
+          <img src="${dataUrl}" style="max-width:100%;display:block;margin:0 auto;" />
+        </body></html>
+      `);
+    } else {
+      const link = document.createElement('a');
+      link.download = `배당금내역_${m.name}_${now.slice(0,10)}.png`;
+      link.href = dataUrl;
+      link.click();
+    }
 
     btn.disabled = false;
     btn.textContent = '📥 신청내역 PNG 저장';
+    btn.classList.add('btn-png');
   } catch (e) {
     alert('저장 중 오류가 발생했습니다.');
   } finally {
