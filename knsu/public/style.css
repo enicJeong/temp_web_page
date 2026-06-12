@@ -462,9 +462,9 @@ body {
 }
 
 .receipt-logo {
-  height: 18mm;
+  height: 40px;
   width: auto;
-  margin-bottom: 4mm;
+  margin-bottom: 8px;
 }
 
 .receipt-coop {
