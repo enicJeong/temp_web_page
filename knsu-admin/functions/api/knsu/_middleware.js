@@ -7,7 +7,7 @@ export async function onRequest(context) {
     return new Response(null, {
       status: 204,
       headers: {
-        'Access-Control-Allow-Origin': 'https://admin.knsucoop.com',
+        'Access-Control-Allow-Origin': request.headers.get('Origin') || 'https://admin.knsucoop.com',
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
@@ -15,39 +15,25 @@ export async function onRequest(context) {
     });
   }
 
-  // 1. 이메일 헤더 시도
   let email = request.headers.get('Cf-Access-Authenticated-User-Email');
 
-  // 2. JWT 헤더 시도
   if (!email) {
     const jwt = request.headers.get('Cf-Access-Jwt-Assertion');
     if (jwt) {
       try {
         const payload = JSON.parse(atob(jwt.split('.')[1]));
         email = payload.email ?? null;
-        console.log('JWT email:', email);
       } catch (e) {
         console.error('JWT parse failed:', e);
       }
     }
   }
 
-  // 3. 쿠키에서 JWT 시도
-  if (!email) {
-    const cookieHeader = request.headers.get('Cookie') ?? '';
-    console.log('Cookies:', cookieHeader.substring(0, 200));
-    
-    const cfJwtMatch = cookieHeader.match(/CF_Authorization=([^;]+)/);
-    if (cfJwtMatch) {
-      try {
-        const payload = JSON.parse(atob(cfJwtMatch[1].split('.')[1]));
-        email = payload.email ?? null;
-        console.log('Cookie JWT email:', email);
-      } catch (e) {
-        console.error('Cookie JWT parse failed:', e);
-      }
-    }
-  }
+  // 디버그: 어떤 헤더가 오는지 로그
+  console.log('email:', email);
+  console.log('jwt exists:', !!request.headers.get('Cf-Access-Jwt-Assertion'));
+  console.log('origin:', request.headers.get('Origin'));
+  console.log('host:', request.headers.get('Host'));
 
   if (!email) {
     return new Response(
@@ -56,7 +42,7 @@ export async function onRequest(context) {
         status: 401,
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': 'https://admin.knsucoop.com',
+          'Access-Control-Allow-Origin': request.headers.get('Origin') || 'https://admin.knsucoop.com',
           'Access-Control-Allow-Credentials': 'true',
         },
       }
@@ -75,7 +61,7 @@ export async function onRequest(context) {
         status: 403,
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': 'https://admin.knsucoop.com',
+          'Access-Control-Allow-Origin': request.headers.get('Origin') || 'https://admin.knsucoop.com',
           'Access-Control-Allow-Credentials': 'true',
         },
       }
