@@ -443,3 +443,82 @@ body {
 }
 .footer a { color: var(--green); text-decoration: none; font-weight: 600; }
 .footer a:hover { text-decoration: underline; }
+
+/* ── 영수증 (PNG 캡처용) ── */
+.receipt-wrap {
+  width: 794px;
+  min-height: 1123px;
+  padding: 60px 54px;
+  font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+  color: #000;
+  box-sizing: border-box;
+}
+
+.receipt-header {
+  text-align: center;
+  margin-bottom: 20mm;
+  border-bottom: 2px solid #006B54;
+  padding-bottom: 8mm;
+}
+
+.receipt-logo {
+  height: 18mm;
+  width: auto;
+  margin-bottom: 4mm;
+}
+
+.receipt-coop {
+  font-size: 13pt;
+  font-weight: 700;
+  color: #006B54;
+  margin-bottom: 3mm;
+}
+
+.receipt-title {
+  font-size: 16pt;
+  font-weight: 700;
+  color: #000;
+  letter-spacing: -.02em;
+}
+
+.receipt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11pt;
+  margin-bottom: 20mm;
+}
+
+.receipt-table th,
+.receipt-table td {
+  border: 1px solid #333;
+  padding: 4mm 5mm;
+  vertical-align: middle;
+}
+
+.receipt-table th {
+  background: #f0f0f0;
+  font-weight: 700;
+  text-align: center;
+  width: 25%;
+}
+
+.receipt-table td {
+  text-align: right;
+  width: 25%;
+}
+
+.receipt-table tr:last-child td {
+  font-size: 13pt;
+  font-weight: 700;
+  color: #006B54;
+}
+
+.receipt-footer {
+  text-align: center;
+  font-size: 18pt;
+  font-weight: 700;
+  color: #000;
+  margin-top: auto;
+  padding-top: 10mm;
+  border-top: 1px solid #ccc;
+}
