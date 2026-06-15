@@ -368,7 +368,15 @@
       <button class="btn btn-gray" onclick="downloadLogTxt('lookup')">📄 CSV 다운로드</button>
     </div>
     <div class="table-wrap" style="margin-bottom:16px;">
-      <table>
+      <table style="table-layout:fixed;width:100%;">
+        <colgroup>
+          <col style="width:160px;">
+          <col style="width:52px;">
+          <col style="width:52px;">
+          <col style="width:60px;">
+          <col style="width:52px;">
+          <col style="width:auto;">
+        </colgroup>
         <thead>
           <tr><th>IP</th><th>전체</th><th>성공</th><th>불일치</th><th>차단</th><th>마지막 조회</th></tr>
         </thead>
@@ -783,7 +791,7 @@ async function loadLookupLogs() {
           <td style="color:#27ae60">${r.success}</td>
           <td style="color:#e67e22">${r.mismatch}</td>
           <td style="color:#c0392b">${r.rate_limited}</td>
-          <td>${fmtKST(r.last_at)}</td>
+          <td style="white-space:normal;word-break:keep-all;">${fmtKST(r.last_at)}</td>
         </tr>`).join('');
 
   lookupRecentAll = data.recent ?? [];
@@ -982,7 +990,7 @@ async function loadLookupLogs() {
           <td style="color:#27ae60">${r.success}</td>
           <td style="color:#e67e22">${r.mismatch}</td>
           <td style="color:#c0392b">${r.rate_limited}</td>
-          <td>${fmtKST(r.last_at)}</td>
+          <td style="white-space:normal;word-break:keep-all;">${fmtKST(r.last_at)}</td>
         </tr>`).join('');
 
   lookupRecentAll = data.recent ?? [];
