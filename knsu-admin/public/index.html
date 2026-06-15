@@ -385,6 +385,8 @@
         </tbody>
       </table>
     </div>
+    <div class="page-info" id="ip-log-page-info"></div>
+    <div class="pagination" id="ip-log-pagination"></div>
     <div class="toolbar" style="margin-top:8px;">
       <span style="font-size:13px;color:#555;font-weight:600;">최근 조회 기록</span>
     </div>
@@ -458,6 +460,10 @@ let currentSort = 'date';
 let membersTotal = 0;
 
 // 로그 페이지네이션 상태
+let ipLogAll = [];
+let ipLogPage = 1;
+const IP_PAGE_SIZE = 20;
+
 let lookupRecentAll = [];
 let lookupRecentPage = 1;
 const LOOKUP_PAGE_SIZE = 20;
@@ -980,10 +986,28 @@ async function loadLookupLogs() {
   const data = await apiFetch('/logs?type=lookup');
   const byIp = data.by_ip ?? [];
   window._lookupByIp = byIp;
+  ipLogAll = byIp;
+  ipLogPage = 1;
+  renderIpLogPage(1);
 
-  ipTbody.innerHTML = byIp.length === 0
+  lookupRecentAll = data.recent ?? [];
+  lookupRecentPage = 1;
+  renderLookupRecentPage(1);
+}
+
+function renderIpLogPage(page) {
+  ipLogPage = page;
+  const total = ipLogAll.length;
+  const totalPages = Math.ceil(total / IP_PAGE_SIZE);
+  const slice = ipLogAll.slice((page - 1) * IP_PAGE_SIZE, page * IP_PAGE_SIZE);
+
+  document.getElementById('ip-log-page-info').textContent =
+    `전체 ${total}건 (${page}/${totalPages || 1} 페이지)`;
+
+  const ipTbody = document.getElementById('ip-log-tbody');
+  ipTbody.innerHTML = slice.length === 0
     ? '<tr class="empty-row"><td colspan="6">데이터 없음</td></tr>'
-    : byIp.map(r => `
+    : slice.map(r => `
         <tr class="${r.highlight ? 'highlight-yellow' : ''}">
           <td>${esc(r.ip)}</td>
           <td><strong>${r.total}</strong></td>
@@ -993,9 +1017,7 @@ async function loadLookupLogs() {
           <td style="white-space:normal;word-break:keep-all;">${fmtKST(r.last_at)}</td>
         </tr>`).join('');
 
-  lookupRecentAll = data.recent ?? [];
-  lookupRecentPage = 1;
-  renderLookupRecentPage(1);
+  renderPagination('ip-log-pagination', page, totalPages, renderIpLogPage);
 }
 </script>
 </body>
