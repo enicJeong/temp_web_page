@@ -700,16 +700,22 @@ function renderPagination(elId, current, total, onPage) {
   const el = document.getElementById(elId);
   if (total <= 1) { el.innerHTML = ''; return; }
 
-  const fnStr = onPage.toString();
-  let html = '';
-
-  html += `<button class="page-btn" ${current===1?'disabled':''} onclick="(${fnStr})(${current-1})">‹</button>`;
+  const pages = [];
+  pages.push({ label: '‹', page: current - 1, disabled: current === 1 });
   for (let p = 1; p <= total; p++) {
-    html += `<button class="page-btn ${p===current?'active':''}" onclick="(${fnStr})(${p})">${p}</button>`;
+    pages.push({ label: String(p), page: p, disabled: false, active: p === current });
   }
-  html += `<button class="page-btn" ${current===total?'disabled':''} onclick="(${fnStr})(${current+1})">›</button>`;
+  pages.push({ label: '›', page: current + 1, disabled: current === total });
 
-  el.innerHTML = html;
+  el.innerHTML = '';
+  pages.forEach(({ label, page, disabled, active }) => {
+    const btn = document.createElement('button');
+    btn.className = 'page-btn' + (active ? ' active' : '');
+    btn.textContent = label;
+    btn.disabled = !!disabled;
+    btn.addEventListener('click', () => onPage(page));
+    el.appendChild(btn);
+  });
 }
 
 // ─── 엑셀 다운로드 ──────────────────────────────────────────────
