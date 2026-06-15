@@ -83,8 +83,8 @@ body {
 .notice-box strong { color: var(--green); }
 .notice-box .notice-title {
   font-weight: 700;
-  font-size: 13px;
-  color: var(--green);
+  font-size: 15px;
+  color: var(--blue);
   margin-bottom: 5px;
   text-transform: uppercase;
   letter-spacing: .04em;
