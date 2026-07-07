@@ -45,18 +45,24 @@
       <!-- STEP 1: 본인 확인 -->
       <div id="section-lookup" class="section active">
         <div class="card">
-          <div class="card-title">본인 확인</div>
-          <div class="form-group">
-            <label for="input-name">이름</label>
-            <input type="text" id="input-name" placeholder="홍길동" autocomplete="name" />
+          <div class="dividend-card-header collapsed" id="lookup-header" onclick="toggleLookup()">
+            <div class="card-title" style="margin-bottom:0;">본인 확인</div>
+            <span class="toggle-icon">▾</span>
           </div>
-          <div class="form-group">
-            <label for="input-phone">전화번호</label>
-            <input type="tel" id="input-phone" placeholder="01012345678" autocomplete="tel" inputmode="numeric" />
+          <div class="dividend-card-body collapsed" id="lookup-body">
+            <div class="form-group" style="margin-top:18px;">
+              <label for="input-name">이름</label>
+              <input type="text" id="input-name" placeholder="홍길동" autocomplete="name" />
+            </div>
+            <div class="form-group">
+              <label for="input-phone">전화번호</label>
+              <input type="tel" id="input-phone" placeholder="01012345678" autocomplete="tel" inputmode="numeric" />
+            </div>
+            <p class="foreign-hint">* For foreign nationals, please enter your name without spaces.</p>
+            <div class="error-msg" id="lookup-error"></div>
           </div>
-          <p class="foreign-hint">* For foreign nationals, please enter your name without spaces.</p>
-          <div class="error-msg" id="lookup-error"></div>
-          <button class="btn btn-primary" id="btn-lookup" onclick="doLookup()">배당금 조회</button>
+          <p class="closed-notice">배당금 접수가 마감되었습니다<br>세부사항은 한체대생협 사무국(02-410-6975)로 문의 바랍니다</p>
+          <button class="btn btn-primary" id="btn-lookup" onclick="doLookup()" disabled>배당금 조회</button>
         </div>
       </div>
       <!-- STEP 2: 배당금 내역 + 수령 방법 선택 -->
@@ -429,6 +435,13 @@
       body.style.maxHeight = '0px';
       body.style.opacity = '0';
       icon.classList.add('collapsed');
+      }
+      // ─── 본인확인 드랍다운 ────────────────────────────────────────────
+      function toggleLookup() {
+      const header = document.getElementById('lookup-header');
+      const body = document.getElementById('lookup-body');
+      header.classList.toggle('collapsed');
+      body.classList.toggle('collapsed');
       }
       // ─── 배당금 드랍다운 ──────────────────────────────────────────────
       function toggleDividend() {
