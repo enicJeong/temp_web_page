@@ -43,36 +43,7 @@ export async function onRequestPost(context) {
   const now = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().replace('T', ' ').substring(0, 19);
   const phoneChanged = normalizePhone(body.phone_changed ?? '') || null;
 
-  if (method === 'capital') {
-    // 출자금 반영
-    await db
-      .prepare(
-        `INSERT INTO applications (phone, method, phone_changed, capital_at, applied_at, updated_at)
-         VALUES (?, 'capital', ?, ?, ?, ?)
-         ON CONFLICT(phone) DO UPDATE SET
-           method = 'capital',
-           applicant_name = NULL,
-           bank = NULL,
-           account = NULL,
-           ssn_encrypted = NULL,
-           ssn_iv = NULL,
-           consent1_at = NULL,
-           consent2_at = NULL,
-           consent3_at = NULL,
-           phone_changed = excluded.phone_changed,
-           capital_at = excluded.capital_at,
-           updated_at = excluded.updated_at`
-      )
-      .bind(phone, phoneChanged, now, now, now)
-      .run();
-
-    return jsonResponse({ ok: true, method: 'capital' });
-  }
-
-  // 현금수령 — 입력값 검증
-  const applicantName = (body.applicant_name ?? '').trim();
-  const bank = (body.bank ?? '').trim();
-  const account = (body.account ?? '').trim();
+  // 주민등록번호/필수동의 — 현금수령·출자금반영 공통 검증
   const consent1At = body.consent1_at ?? null;
   const consent2At = body.consent2_at ?? null;
   const consent3At = body.consent3_at ?? null;
@@ -82,9 +53,6 @@ export async function onRequestPost(context) {
   const ssnIvClient = body.ssn_iv ?? null;
   const ssnKeyClient = body.ssn_key ?? null;
 
-  if (!applicantName || !bank || !account) {
-    return jsonResponse({ ok: false, error: '이름, 은행명, 계좌번호를 모두 입력해주세요.' }, 400);
-  }
   if (!ssnEncryptedClient || !ssnIvClient || !ssnKeyClient) {
     return jsonResponse({ ok: false, error: '주민등록번호 정보가 올바르지 않습니다.' }, 400);
   }
@@ -105,6 +73,48 @@ export async function onRequestPost(context) {
   } catch (e) {
     console.error('SSN processing failed:', e);
     return jsonResponse({ ok: false, error: '서버 오류가 발생했습니다.' }, 500);
+  }
+
+  if (method === 'capital') {
+    // 출자금 반영 — 은행명/계좌번호는 받지 않음
+    await db
+      .prepare(
+        `INSERT INTO applications
+           (phone, method, ssn_encrypted, ssn_iv,
+            consent1_at, consent2_at, consent3_at,
+            phone_changed, capital_at, applied_at, updated_at)
+         VALUES (?, 'capital', ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT(phone) DO UPDATE SET
+           method = 'capital',
+           applicant_name = NULL,
+           bank = NULL,
+           account = NULL,
+           ssn_encrypted = excluded.ssn_encrypted,
+           ssn_iv = excluded.ssn_iv,
+           consent1_at = excluded.consent1_at,
+           consent2_at = excluded.consent2_at,
+           consent3_at = excluded.consent3_at,
+           phone_changed = excluded.phone_changed,
+           capital_at = excluded.capital_at,
+           updated_at = excluded.updated_at`
+      )
+      .bind(
+        phone, ssnEncrypted, ssnIv,
+        consent1At, consent2At, consent3At,
+        phoneChanged, now, now, now
+      )
+      .run();
+
+    return jsonResponse({ ok: true, method: 'capital' });
+  }
+
+  // 현금수령 — 예금주/은행명/계좌번호 추가 검증
+  const applicantName = (body.applicant_name ?? '').trim();
+  const bank = (body.bank ?? '').trim();
+  const account = (body.account ?? '').trim();
+
+  if (!applicantName || !bank || !account) {
+    return jsonResponse({ ok: false, error: '이름, 은행명, 계좌번호를 모두 입력해주세요.' }, 400);
   }
 
   await db

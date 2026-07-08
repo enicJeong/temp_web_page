@@ -184,6 +184,10 @@
             실제수령액 기준 <strong>1만원 단위</strong>로 출자금이 증좌되며,<br>
             잔여 금액은 지급 시 처리 방침에 따릅니다.
           </p>
+          <div class="form-group">
+            <label for="capital-ssn">주민등록번호</label>
+            <input type="text" id="capital-ssn" placeholder="000000-0000000" maxlength="14" inputmode="numeric" />
+          </div>
           <div class="phone-change-toggle" onclick="togglePhoneChange('capital')">
             <span>전화번호 변경시 업데이트</span>
             <span id="capital-phone-toggle-icon">▾</span>
@@ -192,6 +196,31 @@
             <div class="form-group" style="margin-top:10px;">
               <label for="capital-phone-changed">변경된 전화번호</label>
               <input type="tel" id="capital-phone-changed" placeholder="변경된 번호 입력" inputmode="numeric" />
+            </div>
+          </div>
+          <hr class="divider" />
+          <div class="card-title" style="font-size:14px;">필수 동의 항목</div>
+          <div class="consent-group">
+            <div class="consent-item">
+              <input type="checkbox" id="capital-consent1" onchange="recordConsent(1, 'capital')" />
+              <label for="capital-consent1">
+                <strong>[필수] 개인정보 수집·이용 동의</strong>
+                <div class="consent-detail">수집 항목: 성명, 휴대전화번호<br>이용 목적: 배당금 지급에 필요한 정보 / 보유기간: 원천세 신고 완료 시까지</div>
+              </label>
+            </div>
+            <div class="consent-item">
+              <input type="checkbox" id="capital-consent2" onchange="recordConsent(2, 'capital')" />
+              <label for="capital-consent2">
+                <strong>[필수] 고유식별정보 수집·이용 동의</strong>
+                <div class="consent-detail">수집 항목: 주민등록번호<br>이용 목적: 배당금 지급에 필요한 정보 / 보유기간: 원천세 신고 완료 시까지</div>
+              </label>
+            </div>
+            <div class="consent-item">
+              <input type="checkbox" id="capital-consent3" onchange="recordConsent(3, 'capital')" />
+              <label for="capital-consent3">
+                <strong>[필수] 개인정보 및 고유식별정보 제3자 제공 동의</strong>
+                <div class="consent-detail">제공받는 자: 퍼스트세무법인 / 이용 목적: 배당금의 원천세 신고<br>제공 항목: 성명, 주민등록번호 / 보유기간: 원천세 신고 완료 시까지</div>
+              </label>
             </div>
           </div>
           <div class="error-msg" id="capital-error"></div>
@@ -258,6 +287,7 @@
       existing: null,
       selectedMethod: null,
       consentTimes: { 1: null, 2: null, 3: null },
+      capitalConsentTimes: { 1: null, 2: null, 3: null },
       reapplyConfirmed: false,
       };
       // ─── 섹션 전환 ───────────────────────────────────────────────────
@@ -392,17 +422,20 @@
       }, 200);
       }
       // ─── 동의 시각 기록 ──────────────────────────────────────────────
-      function recordConsent(num) {
-      const checked = document.getElementById(`consent${num}`).checked;
-      state.consentTimes[num] = checked ? new Date().toISOString() : null;
+      function recordConsent(num, type = 'cash') {
+      const id = type === 'cash' ? `consent${num}` : `capital-consent${num}`;
+      const checked = document.getElementById(id).checked;
+      const target = type === 'cash' ? state.consentTimes : state.capitalConsentTimes;
+      target[num] = checked ? new Date().toISOString() : null;
       }
       // ─── 주민번호 포맷 (하이픈 자동 삽입) ───────────────────────────
       document.addEventListener('DOMContentLoaded', () => {
-      const ssnInput = document.getElementById('cash-ssn');
-      ssnInput.addEventListener('input', (e) => {
+      ['cash-ssn', 'capital-ssn'].forEach(id => {
+      document.getElementById(id).addEventListener('input', (e) => {
       let v = e.target.value.replace(/\D/g, '');
       if (v.length > 6) v = v.slice(0, 6) + '-' + v.slice(6, 13);
       e.target.value = v;
+      });
       });
       // Enter 키로 조회
       document.getElementById('input-phone').addEventListener('keydown', (e) => {
@@ -492,6 +525,16 @@
       document.getElementById('confirm-modal').classList.remove('show');
       await submitCash();
       }
+      // ─── 주민번호 클라이언트 AES-256-GCM 암호화 ─────────────────────
+      async function encryptSsnClient(ssn) {
+      const key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt']);
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const encoded = new TextEncoder().encode(ssn);
+      const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, encoded);
+      const rawKey = await crypto.subtle.exportKey('raw', key);
+      const toB64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+      return { ssnEncrypted: toB64(cipher), ssnIv: toB64(iv), ssnKey: toB64(rawKey) };
+      }
       // ─── STEP 3-A: 현금수령 제출 ────────────────────────────────────
       async function submitCash() {
       const errEl = document.getElementById('cash-error');
@@ -516,19 +559,9 @@
       }
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span>신청 중...';
-      // 주민번호 클라이언트 AES-256-GCM 암호화
-      let ssnEncrypted, ssnIv;
+      let ssnEncrypted, ssnIv, ssnKey;
       try {
-      const key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt']);
-      const iv = crypto.getRandomValues(new Uint8Array(12));
-      const encoded = new TextEncoder().encode(ssn);
-      const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, encoded);
-      const rawKey = await crypto.subtle.exportKey('raw', key);
-      const toB64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
-      ssnEncrypted = toB64(cipher);
-      ssnIv = toB64(iv);
-      // 세션키도 함께 전송 (서버의 ENCRYPTION_KEY로 재암호화)
-      state._ssnSessionKey = toB64(rawKey);
+      ({ ssnEncrypted, ssnIv, ssnKey } = await encryptSsnClient(ssn));
       } catch(e) {
       errEl.textContent = '암호화 오류가 발생했습니다.'; errEl.classList.add('show'); return;
       }
@@ -545,7 +578,7 @@
       account,
       ssn_encrypted: ssnEncrypted,
       ssn_iv: ssnIv,
-      ssn_key: state._ssnSessionKey,
+      ssn_key: ssnKey,
       phone_changed: phoneChanged,
       consent1_at: state.consentTimes[1],
       consent2_at: state.consentTimes[2],
@@ -569,9 +602,25 @@
       const errEl = document.getElementById('capital-error');
       const btn = document.getElementById('btn-capital-submit');
       errEl.classList.remove('show');
+      const ssn = document.getElementById('capital-ssn').value.replace(/\D/g, '');
       const phoneChanged = document.getElementById('capital-phone-changed').value.replace(/\D/g, '') || null;
+      const c1 = document.getElementById('capital-consent1').checked;
+      const c2 = document.getElementById('capital-consent2').checked;
+      const c3 = document.getElementById('capital-consent3').checked;
+      if (ssn.length !== 13) {
+      errEl.textContent = '주민등록번호 13자리를 올바르게 입력해주세요.'; errEl.classList.add('show'); return;
+      }
+      if (!c1 || !c2 || !c3) {
+      errEl.textContent = '필수 동의 항목을 모두 체크해주세요.'; errEl.classList.add('show'); return;
+      }
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span>신청 중...';
+      let ssnEncrypted, ssnIv, ssnKey;
+      try {
+      ({ ssnEncrypted, ssnIv, ssnKey } = await encryptSsnClient(ssn));
+      } catch(e) {
+      errEl.textContent = '암호화 오류가 발생했습니다.'; errEl.classList.add('show'); btn.disabled = false; btn.textContent = '출자금 반영 신청'; return;
+      }
       try {
       const res = await fetch('/knsu/submit', {
       method: 'POST',
@@ -580,7 +629,13 @@
       phone: state.phone,
       name: state.name,
       method: 'capital',
+      ssn_encrypted: ssnEncrypted,
+      ssn_iv: ssnIv,
+      ssn_key: ssnKey,
       phone_changed: phoneChanged,
+      consent1_at: state.capitalConsentTimes[1],
+      consent2_at: state.capitalConsentTimes[2],
+      consent3_at: state.capitalConsentTimes[3],
       }),
       });
       const data = await res.json();
